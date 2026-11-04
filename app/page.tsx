@@ -140,20 +140,20 @@ export default function HomePage() {
       {/* Celebration Party Banner Notification */}
       {isCelebrating && (
         <div
-          className="absolute top-16 left-0 right-0 z-30 flex justify-center px-4 pointer-events-none animate-bounce"
-          style={{ position: "absolute", top: "60px", zIndex: 30, pointerEvents: "none" }}
+          className="absolute top-14 sm:top-16 left-2 right-2 sm:left-0 sm:right-0 z-30 flex justify-center px-2 sm:px-4 pointer-events-none animate-bounce"
+          style={{ position: "absolute", top: "54px", zIndex: 30, pointerEvents: "none" }}
         >
-          <div className="pointer-events-auto flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-white/95 border-2 border-pink-500 shadow-2xl text-slate-900 backdrop-blur-md">
-            <PartyPopper className="w-5 h-5 text-pink-600 animate-spin" />
-            <div className="text-xs">
-              <span className="font-extrabold text-pink-600">🎉 CELEBRATION PARTY MODE ACTIVE! 🎵</span>
-              <p className="text-[11px] font-bold text-slate-700">
-                Honoring the 6 Official Proponents & Eco-ICT Vision in Caraga!
+          <div className="pointer-events-auto flex items-center gap-2 sm:gap-2.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl bg-white/98 border-2 border-pink-500 shadow-2xl text-slate-900 backdrop-blur-md max-w-md">
+            <PartyPopper className="w-4 h-4 sm:w-5 sm:h-5 text-pink-600 animate-spin shrink-0" />
+            <div className="text-[10px] sm:text-xs min-w-0">
+              <span className="font-extrabold text-pink-600 block truncate">🎉 CELEBRATION PARTY ACTIVE! 🎵</span>
+              <p className="text-[9px] sm:text-[11px] font-bold text-slate-700 truncate">
+                Caraga Eco-ICT Initiative • 6 Proponents
               </p>
             </div>
             <button
               onClick={handleToggleCelebrate}
-              className="ml-2 px-2.5 py-1 rounded-lg bg-pink-100 hover:bg-pink-200 text-pink-800 font-extrabold text-[11px] cursor-pointer"
+              className="ml-auto px-2 sm:px-2.5 py-1 rounded-lg bg-pink-100 hover:bg-pink-200 text-pink-800 font-extrabold text-[10px] sm:text-[11px] cursor-pointer shrink-0"
             >
               Pause
             </button>

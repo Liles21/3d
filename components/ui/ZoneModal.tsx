@@ -47,28 +47,33 @@ export function ZoneModal({
 
   return (
     <div
-      className="absolute top-16 right-3 md:right-5 bottom-20 z-30 w-full max-w-sm pointer-events-none flex flex-col justify-end md:justify-start"
-      style={{ position: "absolute", top: "64px", right: "16px", zIndex: 30, pointerEvents: "none" }}
+      className="fixed inset-x-3 bottom-16 md:inset-auto md:top-16 md:right-5 md:bottom-auto z-30 md:w-96 pointer-events-none flex flex-col"
+      style={{ zIndex: 30, pointerEvents: "none" }}
     >
-      <div className="pointer-events-auto bg-white/98 backdrop-blur-xl border border-slate-200 rounded-2xl p-4 md:p-5 shadow-2xl text-slate-800 flex flex-col max-h-[75vh] overflow-y-auto">
+      <div
+        className="pointer-events-auto bg-white/98 backdrop-blur-xl border border-slate-200 rounded-2xl p-4 md:p-5 shadow-2xl text-slate-800 flex flex-col max-h-[65vh] md:max-h-[78vh] overflow-y-auto"
+        style={{
+          WebkitOverflowScrolling: "touch",
+        }}
+      >
         {/* Top Header */}
-        <div className="flex items-start justify-between gap-3 mb-3 border-b border-slate-100 pb-3">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-emerald-50 border border-emerald-200 shadow-sm">
+        <div className="flex items-start justify-between gap-3 mb-3 border-b border-slate-100 pb-3 shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="p-2 sm:p-2.5 rounded-2xl bg-emerald-50 border border-emerald-200 shadow-sm shrink-0">
               {ICONS[zone.details.iconName]}
             </div>
             <div>
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-700">
                 Exploration Focus
               </span>
-              <h2 className="text-lg md:text-xl font-extrabold text-slate-900 leading-tight">
+              <h2 className="text-base sm:text-lg md:text-xl font-extrabold text-slate-900 leading-tight">
                 {zone.name}
               </h2>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition-colors cursor-pointer"
+            className="p-1.5 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition-colors cursor-pointer shrink-0"
             aria-label="Close"
           >
             <X className="w-4 h-4" />

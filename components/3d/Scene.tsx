@@ -91,7 +91,7 @@ export const Scene = memo(function Scene({
   );
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full select-none" style={{ touchAction: "none" }}>
       <Canvas
         shadows
         dpr={[1, 1.5]}
@@ -105,6 +105,7 @@ export const Scene = memo(function Scene({
           powerPreference: "high-performance",
         }}
         className="w-full h-full cursor-grab active:cursor-grabbing"
+        style={{ touchAction: "none" }}
       >
         <Suspense fallback={null}>
           {/* Dynamic Sun/Moon and Atmospheric Lighting */}

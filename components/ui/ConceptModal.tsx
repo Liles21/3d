@@ -37,7 +37,7 @@ export function ConceptModal({ isOpen, onClose, onCelebrate }: ConceptModalProps
 
   return (
     <div
-      className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md overflow-y-auto"
+      className="fixed inset-0 z-[99999] flex items-center justify-center p-2 sm:p-4 bg-slate-950/75 backdrop-blur-md overflow-y-auto"
       style={{
         position: "fixed",
         top: 0,
@@ -50,29 +50,34 @@ export function ConceptModal({ isOpen, onClose, onCelebrate }: ConceptModalProps
         WebkitBackdropFilter: "blur(12px)",
       }}
     >
-      <div className="relative w-full max-w-4xl bg-white border-2 border-emerald-600 rounded-3xl p-6 md:p-8 shadow-2xl text-slate-800 max-h-[90vh] overflow-y-auto">
+      <div
+        className="relative w-full max-w-4xl bg-white border-2 border-emerald-600 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl text-slate-800 max-h-[92vh] overflow-y-auto"
+        style={{
+          WebkitOverflowScrolling: "touch",
+        }}
+      >
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition-colors cursor-pointer"
+          className="absolute top-3 sm:top-5 right-3 sm:right-5 p-1.5 sm:p-2 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition-colors cursor-pointer shrink-0"
           aria-label="Close"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
 
         {/* Top Header Badge */}
-        <div className="flex items-center gap-2 mb-2">
-          <span className="flex h-3 w-3 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-xs font-mono font-extrabold uppercase tracking-widest text-emerald-700">
-            Official Project Document & Concept Blueprint
+        <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 pr-8">
+          <span className="flex h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+          <span className="text-[10px] sm:text-xs font-mono font-extrabold uppercase tracking-widest text-emerald-700 truncate">
+            Official Concept Blueprint & Roster
           </span>
         </div>
 
         {/* Title */}
-        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight mb-1">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight mb-1 pr-6">
           {PROJECT_TITLE}
         </h1>
-        <p className="text-sm font-semibold text-emerald-700 mb-6">
+        <p className="text-xs sm:text-sm font-semibold text-emerald-700 mb-4 sm:mb-6">
           {PROJECT_SUBTITLE}
         </p>
 
