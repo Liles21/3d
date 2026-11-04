@@ -39,14 +39,14 @@ export function ActivityModal({
   isActivityActive,
   onToggleActivity,
 }: ActivityModalProps) {
-  // Game State
+  // Game State: Start minimized so the 3D gathered humans and boards are completely unobstructed
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [hasAnswered, setHasAnswered] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
   const [streak, setStreak] = useState<number>(0);
   const [answeredQuestions, setAnsweredQuestions] = useState<Record<number, { optionId: string; isCorrect: boolean }>>({});
   const [isGameFinished, setIsGameFinished] = useState<boolean>(false);
-  const [isMinimized, setIsMinimized] = useState<boolean>(false);
+  const [isMinimized, setIsMinimized] = useState<boolean>(true);
 
   if (!isOpen) return null;
 
@@ -152,31 +152,31 @@ export function ActivityModal({
   if (isMinimized) {
     return (
       <div
-        className="fixed bottom-3 right-3 sm:bottom-5 sm:right-5 z-40 pointer-events-none"
+        className="fixed bottom-14 sm:bottom-4 right-2 sm:right-4 z-40 pointer-events-none"
         style={{ zIndex: 40, pointerEvents: "none" }}
       >
-        <div className="pointer-events-auto flex items-center gap-2 p-2 rounded-2xl bg-white/98 backdrop-blur-xl border-2 border-emerald-600 shadow-2xl text-slate-900">
-          <div className="flex items-center gap-1.5 pl-1 font-extrabold text-xs text-emerald-800">
-            <Gamepad2 className="w-4 h-4 text-emerald-600" />
-            <span>Challenge {currentQ.id}/5</span>
+        <div className="pointer-events-auto flex items-center gap-1.5 sm:gap-2 p-1.5 sm:p-2 rounded-2xl bg-white/98 backdrop-blur-xl border-2 border-emerald-600 shadow-2xl text-slate-900">
+          <div className="flex items-center gap-1 pl-1 font-extrabold text-xs text-emerald-800">
+            <Gamepad2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>Q{currentQ.id}/5</span>
             <span className="text-slate-300">•</span>
-            <span>🌿 {score} pts</span>
+            <span>🌿 {score}pts</span>
           </div>
 
           <button
             onClick={() => setIsMinimized(false)}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs cursor-pointer shadow-sm transition-all"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs cursor-pointer shadow-sm transition-all active:scale-95"
           >
             <span>Play Game</span>
-            <Maximize2 className="w-3.5 h-3.5" />
+            <Maximize2 className="w-3 h-3" />
           </button>
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-800 cursor-pointer"
+            className="p-1 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-800 cursor-pointer"
             aria-label="Close"
           >
-            <X className="w-4 h-4" />
+            <X className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
@@ -185,29 +185,30 @@ export function ActivityModal({
 
   return (
     <div
-      className="fixed bottom-2 right-2 left-2 sm:left-auto sm:bottom-4 sm:right-4 z-40 max-w-md sm:max-w-lg pointer-events-none flex flex-col justify-end"
+      className="fixed bottom-14 sm:bottom-4 right-2 left-2 sm:left-auto sm:right-4 z-40 max-w-md sm:max-w-lg pointer-events-none flex flex-col justify-end"
       style={{
         zIndex: 40,
         pointerEvents: "none",
       }}
     >
       <div
-        className="pointer-events-auto relative w-full bg-white/98 backdrop-blur-2xl border-2 border-emerald-600 rounded-3xl p-4 sm:p-5 shadow-2xl text-slate-800 max-h-[80vh] sm:max-h-[82vh] overflow-y-auto flex flex-col"
+        className="pointer-events-auto relative w-full bg-white/98 backdrop-blur-2xl border-2 border-emerald-600 rounded-3xl p-3.5 sm:p-5 shadow-2xl text-slate-800 max-h-[48vh] sm:max-h-[75vh] overflow-y-auto flex flex-col"
         style={{ WebkitOverflowScrolling: "touch" }}
       >
         {/* Top Control Buttons: Minimize & Close */}
-        <div className="absolute top-3 sm:top-4 right-3 sm:right-4 flex items-center gap-1.5 z-10">
+        <div className="absolute top-2.5 sm:top-4 right-2.5 sm:right-4 flex items-center gap-1.5 z-10">
           <button
             onClick={() => setIsMinimized(true)}
             title="Minimize to see 3D forest & gathered students"
-            className="p-1.5 rounded-full bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200 transition-colors cursor-pointer"
+            className="flex items-center gap-1 px-2 py-1 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-[10px] sm:text-[11px] font-extrabold cursor-pointer transition-colors"
             aria-label="Minimize"
           >
-            <Minimize2 className="w-4 h-4" />
+            <ChevronDown className="w-3.5 h-3.5" />
+            <span className="hidden xs:inline">Minimize</span>
           </button>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition-colors cursor-pointer"
+            className="p-1 rounded-xl bg-slate-100 text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition-colors cursor-pointer"
             aria-label="Close"
           >
             <X className="w-4 h-4" />

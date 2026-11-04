@@ -37,7 +37,7 @@ export function ConceptModal({ isOpen, onClose, onCelebrate }: ConceptModalProps
 
   return (
     <div
-      className="fixed inset-0 z-[99999] flex items-center justify-center p-2 sm:p-4 bg-slate-950/75 backdrop-blur-md overflow-y-auto"
+      className="fixed inset-0 z-[99999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/45 backdrop-blur-xs overflow-y-auto"
       style={{
         position: "fixed",
         top: 0,
@@ -45,17 +45,18 @@ export function ConceptModal({ isOpen, onClose, onCelebrate }: ConceptModalProps
         right: 0,
         bottom: 0,
         zIndex: 99999,
-        backgroundColor: "rgba(15, 23, 42, 0.75)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
+        backgroundColor: "rgba(15, 23, 42, 0.45)",
       }}
     >
       <div
-        className="relative w-full max-w-4xl bg-white border-2 border-emerald-600 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl text-slate-800 max-h-[92vh] overflow-y-auto"
+        className="relative w-full max-w-4xl bg-white border-t-2 sm:border-2 border-emerald-600 rounded-t-3xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl text-slate-800 max-h-[55vh] sm:max-h-[88vh] overflow-y-auto"
         style={{
           WebkitOverflowScrolling: "touch",
         }}
       >
+        {/* Mobile Pull Handle Indicator */}
+        <div className="w-12 h-1 bg-slate-200 rounded-full mx-auto mb-2.5 sm:hidden" />
+
         {/* Close Button */}
         <button
           onClick={onClose}

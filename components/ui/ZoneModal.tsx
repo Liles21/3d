@@ -68,7 +68,7 @@ export function ZoneModal({
       <div
         className={`pointer-events-auto bg-white/98 backdrop-blur-xl border border-slate-200/90 rounded-2xl shadow-2xl shadow-black/15 text-slate-800 flex flex-col transition-all duration-300 ${
           isExpanded
-            ? "p-4 sm:p-5 max-h-[75vh] md:max-h-[80vh] overflow-y-auto"
+            ? "p-4 sm:p-5 max-h-[50vh] md:max-h-[80vh] overflow-y-auto"
             : "p-2.5 sm:p-3 md:p-4 max-h-[80vh] md:overflow-y-auto"
         }`}
         style={{
