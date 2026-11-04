@@ -4,11 +4,14 @@ import { useFrame } from "@react-three/fiber";
 import React, { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { ZoneId } from "@/lib/types";
+import { PRESENTER_DISCUSSIONS } from "@/lib/studentDiscussionData";
+import { StudentPresentationBoard } from "./StudentPresentationBoard";
 
 interface WalkingStudentProps {
   activeZone: ZoneId;
   isCelebrating?: boolean;
   isActivityActive?: boolean;
+  currentQuestionIndex?: number;
 }
 
 // Ground walkway destinations corresponding to each interactive zone
@@ -37,7 +40,11 @@ export function WalkingStudent({
   activeZone,
   isCelebrating = false,
   isActivityActive = false,
+  currentQuestionIndex = 0,
 }: WalkingStudentProps) {
+  const presenterDiscussion =
+    PRESENTER_DISCUSSIONS[currentQuestionIndex % PRESENTER_DISCUSSIONS.length] ||
+    PRESENTER_DISCUSSIONS[0];
   const groupRef = useRef<THREE.Group>(null);
   const leftLegRef = useRef<THREE.Group>(null);
   const rightLegRef = useRef<THREE.Group>(null);
@@ -442,35 +449,17 @@ export function WalkingStudent({
         </mesh>
       </group>
 
-      {/* 6. Discussion Presentation Board (Held during Activity Mode) */}
+      {/* 6. Discussion Presentation Board with Crisp Legible Content */}
       {isActivityActive && (
-        <group position={[0, 1.08, 0.32]} rotation={[-0.15, 0, 0]}>
-          <mesh castShadow receiveShadow>
-            <boxGeometry args={[0.42, 0.52, 0.018]} />
-            <meshStandardMaterial color="#0f172a" roughness={0.5} />
-          </mesh>
-          <mesh position={[0, 0, 0.01]} receiveShadow>
-            <planeGeometry args={[0.38, 0.48]} />
-            <meshStandardMaterial color="#ffffff" roughness={0.25} />
-          </mesh>
-          {/* Gold Lapel Clip */}
-          <mesh position={[0, 0.24, 0.016]} castShadow>
-            <boxGeometry args={[0.14, 0.035, 0.02]} />
-            <meshStandardMaterial color="#d4af37" metalness={0.9} roughness={0.2} />
-          </mesh>
-          {/* Gold Header Band */}
-          <mesh position={[0, 0.17, 0.012]}>
-            <boxGeometry args={[0.32, 0.022, 0.005]} />
-            <meshStandardMaterial color="#059669" />
-          </mesh>
-          {/* Note Lines */}
-          {[-0.01, -0.06, -0.11, -0.16, -0.21].map((ly, lIdx) => (
-            <mesh key={ly} position={[0, ly, 0.012]}>
-              <boxGeometry args={[0.3, 0.008, 0.004]} />
-              <meshStandardMaterial color="#cbd5e1" />
-            </mesh>
-          ))}
-        </group>
+        <StudentPresentationBoard
+          studentName="CLASSROOM MODERATOR"
+          role="Discussion Lead & Presenter"
+          title={presenterDiscussion.title}
+          points={presenterDiscussion.points}
+          slogan={presenterDiscussion.slogan}
+          questionNumber={(currentQuestionIndex % 5) + 1}
+          isPresenter={true}
+        />
       )}
     </group>
   );

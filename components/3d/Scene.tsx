@@ -18,6 +18,7 @@ import { WalkingStudent } from "./WalkingStudent";
 import { PartyEffects } from "./PartyEffects";
 import { AutonomousWalkingVisitor } from "./AutonomousWalkingVisitor";
 import { ClassroomActivityBoard } from "./ClassroomActivityBoard";
+import { STUDENT_PROFILES } from "@/lib/studentDiscussionData";
 
 interface SceneProps {
   activeZone: ZoneId;
@@ -184,15 +185,16 @@ export const Scene = memo(function Scene({
             activeZone={activeZone}
             isCelebrating={isCelebrating}
             isActivityActive={isActivityActive}
+            currentQuestionIndex={currentQuestionIndex}
           />
 
           {/* =========================================================================
-              AUTONOMOUS WALKING HUMAN VISITORS
+              AUTONOMOUS WALKING HUMAN VISITORS (6 Official Student Proponents)
               - Walk freely around trails during exploration
               - Dance synchronously when Celebrate mode is on
-              - GATHER TOGETHER AND HOLD PRESENTATION BOARDS during Activity mode!
+              - GATHER IN AN ARC & HOLD DETAILED DISCUSSION BOARDS during Activity mode!
           ========================================================================= */}
-          {/* Visitor 1: Slot Left-Outer (Cyan eco-jacket) */}
+          {/* Visitor 1: AYELLA NICOLE MILLAN (Cyan eco-jacket) */}
           <AutonomousWalkingVisitor
             waypoints={[
               [1.4, 0, 32.0],
@@ -204,14 +206,16 @@ export const Scene = memo(function Scene({
             ]}
             speed={1.6}
             startDelay={0}
-            outfit={{ topColor: "#0284c7", bottomColor: "#1e293b", hairColor: "#171717" }}
+            outfit={STUDENT_PROFILES[0].outfit}
             isCelebrating={isCelebrating}
             isActivityActive={isActivityActive}
             activitySpot={[-2.4, 0, 7.0]}
             activityFacing={0.45}
+            studentProfile={STUDENT_PROFILES[0]}
+            currentQuestionIndex={currentQuestionIndex}
           />
 
-          {/* Visitor 2: Slot Left-Mid (Indigo hoodie) */}
+          {/* Visitor 2: FRETCHIE MAGUINDA (Indigo hoodie) */}
           <AutonomousWalkingVisitor
             waypoints={[
               [-3.5, 0, 8.5],
@@ -223,14 +227,16 @@ export const Scene = memo(function Scene({
             ]}
             speed={1.7}
             startDelay={2.5}
-            outfit={{ topColor: "#4f46e5", bottomColor: "#334155", hairColor: "#78350f" }}
+            outfit={STUDENT_PROFILES[1].outfit}
             isCelebrating={isCelebrating}
             isActivityActive={isActivityActive}
             activitySpot={[-1.4, 0, 7.4]}
             activityFacing={0.25}
+            studentProfile={STUDENT_PROFILES[1]}
+            currentQuestionIndex={currentQuestionIndex}
           />
 
-          {/* Visitor 3: Slot Left-Center (Red jacket) */}
+          {/* Visitor 3: RECHELLE MALBAS (Red jacket) */}
           <AutonomousWalkingVisitor
             waypoints={[
               [3.5, 0, 8.5],
@@ -242,14 +248,16 @@ export const Scene = memo(function Scene({
             ]}
             speed={1.65}
             startDelay={4.2}
-            outfit={{ topColor: "#dc2626", bottomColor: "#0f172a", hairColor: "#27272a" }}
+            outfit={STUDENT_PROFILES[2].outfit}
             isCelebrating={isCelebrating}
             isActivityActive={isActivityActive}
             activitySpot={[-0.4, 0, 7.6]}
             activityFacing={0.08}
+            studentProfile={STUDENT_PROFILES[2]}
+            currentQuestionIndex={currentQuestionIndex}
           />
 
-          {/* Visitor 4: Slot Right-Center (Emerald polo) */}
+          {/* Visitor 4: RANDOLF MONDEJAR (Emerald polo) */}
           <AutonomousWalkingVisitor
             waypoints={[
               [0, 0, 5.2],
@@ -261,14 +269,16 @@ export const Scene = memo(function Scene({
             ]}
             speed={1.5}
             startDelay={1.8}
-            outfit={{ topColor: "#059669", bottomColor: "#1e293b", hairColor: "#451a03" }}
+            outfit={STUDENT_PROFILES[3].outfit}
             isCelebrating={isCelebrating}
             isActivityActive={isActivityActive}
             activitySpot={[0.6, 0, 7.6]}
             activityFacing={-0.08}
+            studentProfile={STUDENT_PROFILES[3]}
+            currentQuestionIndex={currentQuestionIndex}
           />
 
-          {/* Visitor 5: Slot Right-Mid (Pink casual sweater) */}
+          {/* Visitor 5: JUSTIN KILARIO (Pink sweater) */}
           <AutonomousWalkingVisitor
             waypoints={[
               [-5.0, 0, 8.5],
@@ -278,14 +288,16 @@ export const Scene = memo(function Scene({
             ]}
             speed={1.4}
             startDelay={3.1}
-            outfit={{ topColor: "#ec4899", bottomColor: "#1e293b", hairColor: "#1c1917" }}
+            outfit={STUDENT_PROFILES[4].outfit}
             isCelebrating={isCelebrating}
             isActivityActive={isActivityActive}
             activitySpot={[1.6, 0, 7.4]}
             activityFacing={-0.25}
+            studentProfile={STUDENT_PROFILES[4]}
+            currentQuestionIndex={currentQuestionIndex}
           />
 
-          {/* Visitor 6: Slot Right-Outer (Amber outdoor jacket) */}
+          {/* Visitor 6: GUADALYN LABASTILLA (Amber outdoor jacket) */}
           <AutonomousWalkingVisitor
             waypoints={[
               [5.0, 0, 8.5],
@@ -295,11 +307,13 @@ export const Scene = memo(function Scene({
             ]}
             speed={1.55}
             startDelay={2.1}
-            outfit={{ topColor: "#d97706", bottomColor: "#1e293b", hairColor: "#451a03" }}
+            outfit={STUDENT_PROFILES[5].outfit}
             isCelebrating={isCelebrating}
             isActivityActive={isActivityActive}
             activitySpot={[2.6, 0, 7.0]}
             activityFacing={-0.45}
+            studentProfile={STUDENT_PROFILES[5]}
+            currentQuestionIndex={currentQuestionIndex}
           />
 
           {/* Party Celebration 3D Lights, Balloons & Confetti */}

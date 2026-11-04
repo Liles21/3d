@@ -3,6 +3,8 @@
 import { useFrame } from "@react-three/fiber";
 import React, { useRef, useState } from "react";
 import * as THREE from "three";
+import { StudentProfile } from "@/lib/studentDiscussionData";
+import { StudentPresentationBoard } from "./StudentPresentationBoard";
 
 export interface AutonomousWalkingVisitorProps {
   waypoints: [number, number, number][];
@@ -19,6 +21,8 @@ export interface AutonomousWalkingVisitorProps {
   activitySpot?: [number, number, number];
   activityFacing?: number;
   startDelay?: number;
+  studentProfile?: StudentProfile;
+  currentQuestionIndex?: number;
 }
 
 export function AutonomousWalkingVisitor({
@@ -30,6 +34,8 @@ export function AutonomousWalkingVisitor({
   activitySpot,
   activityFacing = 0,
   startDelay = 0,
+  studentProfile,
+  currentQuestionIndex = 0,
 }: AutonomousWalkingVisitorProps) {
   const groupRef = useRef<THREE.Group>(null);
   const leftLegRef = useRef<THREE.Group>(null);
@@ -52,6 +58,17 @@ export function AutonomousWalkingVisitor({
 
   const skin = outfit.skinColor || "#f5d0b0";
   const shoes = outfit.shoeColor || "#1e293b";
+
+  // Select active discussion note for the current question
+  const activeDiscussion = studentProfile?.discussions[currentQuestionIndex % 5] || {
+    title: "Caraga Eco-ICT Initiative",
+    points: [
+      "Follow solar device care and classroom guidelines.",
+      "Protect endemic living plants in the study area.",
+      "Promote responsible environmental computing.",
+    ],
+    slogan: "United in Sustainable Learning!",
+  };
 
   useFrame((_, delta) => {
     if (!groupRef.current) return;
@@ -331,37 +348,16 @@ export function AutonomousWalkingVisitor({
           </mesh>
         </group>
 
-        {/* 6. Discussion Presentation Board (Held by student during Activity) */}
+        {/* 6. Discussion Presentation Board with Crisp Legible Content */}
         {isActivityActive && (
-          <group position={[0, 1.05, 0.32]} rotation={[-0.15, 0, 0]}>
-            {/* Timber Clipboard Backing */}
-            <mesh castShadow receiveShadow>
-              <boxGeometry args={[0.38, 0.48, 0.015]} />
-              <meshStandardMaterial color="#854d0e" roughness={0.7} />
-            </mesh>
-            {/* Whiteboard / Note Paper Surface */}
-            <mesh position={[0, 0, 0.009]} receiveShadow>
-              <planeGeometry args={[0.35, 0.44]} />
-              <meshStandardMaterial color="#ffffff" roughness={0.25} />
-            </mesh>
-            {/* Silver Top Clip */}
-            <mesh position={[0, 0.22, 0.015]} castShadow>
-              <boxGeometry args={[0.12, 0.03, 0.02]} />
-              <meshStandardMaterial color="#94a3b8" metalness={0.85} roughness={0.2} />
-            </mesh>
-            {/* Emerald Header Strip */}
-            <mesh position={[0, 0.15, 0.011]}>
-              <boxGeometry args={[0.28, 0.02, 0.005]} />
-              <meshStandardMaterial color="#059669" />
-            </mesh>
-            {/* Note Lines */}
-            {[-0.02, -0.07, -0.12, -0.17].map((ly, lIdx) => (
-              <mesh key={lIdx} position={[0, ly, 0.011]}>
-                <boxGeometry args={[0.28, 0.008, 0.004]} />
-                <meshStandardMaterial color="#cbd5e1" />
-              </mesh>
-            ))}
-          </group>
+          <StudentPresentationBoard
+            studentName={studentProfile?.name || "STUDENT RESEARCHER"}
+            role={studentProfile?.role || "Caraga Eco-ICT Proponent"}
+            title={activeDiscussion.title}
+            points={activeDiscussion.points}
+            slogan={activeDiscussion.slogan}
+            questionNumber={(currentQuestionIndex % 5) + 1}
+          />
         )}
       </group>
     </group>
