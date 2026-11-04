@@ -4,11 +4,14 @@ import confetti from "canvas-confetti";
 import {
   Award,
   CheckCircle2,
+  ChevronDown,
   ChevronRight,
   Flame,
   Gamepad2,
   GraduationCap,
   Heart,
+  Maximize2,
+  Minimize2,
   RotateCcw,
   Sparkles,
   Trophy,
@@ -43,6 +46,7 @@ export function ActivityModal({
   const [streak, setStreak] = useState<number>(0);
   const [answeredQuestions, setAnsweredQuestions] = useState<Record<number, { optionId: string; isCorrect: boolean }>>({});
   const [isGameFinished, setIsGameFinished] = useState<boolean>(false);
+  const [isMinimized, setIsMinimized] = useState<boolean>(false);
 
   if (!isOpen) return null;
 
@@ -144,33 +148,71 @@ export function ActivityModal({
     onSelectQuestion(0);
   };
 
+  // Minimized Floating Pill Widget (Completely unobstructed 3D view of the gathered humans!)
+  if (isMinimized) {
+    return (
+      <div
+        className="fixed bottom-3 right-3 sm:bottom-5 sm:right-5 z-40 pointer-events-none"
+        style={{ zIndex: 40, pointerEvents: "none" }}
+      >
+        <div className="pointer-events-auto flex items-center gap-2 p-2 rounded-2xl bg-white/98 backdrop-blur-xl border-2 border-emerald-600 shadow-2xl text-slate-900">
+          <div className="flex items-center gap-1.5 pl-1 font-extrabold text-xs text-emerald-800">
+            <Gamepad2 className="w-4 h-4 text-emerald-600" />
+            <span>Challenge {currentQ.id}/5</span>
+            <span className="text-slate-300">•</span>
+            <span>🌿 {score} pts</span>
+          </div>
+
+          <button
+            onClick={() => setIsMinimized(false)}
+            className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs cursor-pointer shadow-sm transition-all"
+          >
+            <span>Play Game</span>
+            <Maximize2 className="w-3.5 h-3.5" />
+          </button>
+
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-800 cursor-pointer"
+            aria-label="Close"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
-      className="fixed inset-0 z-[99999] flex items-center justify-center p-2 sm:p-4 bg-slate-950/75 backdrop-blur-md overflow-y-auto"
+      className="fixed bottom-2 right-2 sm:bottom-4 sm:right-4 z-40 w-full max-w-md sm:max-w-lg pointer-events-none flex flex-col justify-end"
       style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 99999,
-        backgroundColor: "rgba(15, 23, 42, 0.75)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
+        zIndex: 40,
+        pointerEvents: "none",
       }}
     >
       <div
-        className="relative w-full max-w-3xl bg-white border-2 border-emerald-600 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl text-slate-800 max-h-[94vh] overflow-y-auto flex flex-col"
+        className="pointer-events-auto relative w-full bg-white/98 backdrop-blur-2xl border-2 border-emerald-600 rounded-3xl p-4 sm:p-5 shadow-2xl text-slate-800 max-h-[80vh] sm:max-h-[82vh] overflow-y-auto flex flex-col"
         style={{ WebkitOverflowScrolling: "touch" }}
       >
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-3 sm:top-5 right-3 sm:right-5 p-1.5 sm:p-2 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition-colors cursor-pointer shrink-0 z-10"
-          aria-label="Close"
-        >
-          <X className="w-4 h-4 sm:w-5 sm:h-5" />
-        </button>
+        {/* Top Control Buttons: Minimize & Close */}
+        <div className="absolute top-3 sm:top-4 right-3 sm:right-4 flex items-center gap-1.5 z-10">
+          <button
+            onClick={() => setIsMinimized(true)}
+            title="Minimize to see 3D forest & gathered students"
+            className="p-1.5 rounded-full bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200 transition-colors cursor-pointer"
+            aria-label="Minimize"
+          >
+            <Minimize2 className="w-4 h-4" />
+          </button>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition-colors cursor-pointer"
+            aria-label="Close"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
 
         {/* =========================================================================
             GAME HUD HEADER: SCORE, STREAK, LEVEL PROGRESS

@@ -61,10 +61,22 @@ export function AutonomousWalkingVisitor({
       targetPos.current.set(activitySpot[0], 0, activitySpot[2]);
       const distToSpot = currentPos.current.distanceTo(targetPos.current);
 
-      if (distToSpot > 0.15) {
-        // Walk towards gathering spot
+      // Always pose arms holding the board in front of chest
+      if (leftArmRef.current) {
+        leftArmRef.current.rotation.x = THREE.MathUtils.lerp(leftArmRef.current.rotation.x, -0.85, 0.15);
+        leftArmRef.current.rotation.y = THREE.MathUtils.lerp(leftArmRef.current.rotation.y, 0.32, 0.15);
+        leftArmRef.current.rotation.z = THREE.MathUtils.lerp(leftArmRef.current.rotation.z, -0.15, 0.15);
+      }
+      if (rightArmRef.current) {
+        rightArmRef.current.rotation.x = THREE.MathUtils.lerp(rightArmRef.current.rotation.x, -0.85, 0.15);
+        rightArmRef.current.rotation.y = THREE.MathUtils.lerp(rightArmRef.current.rotation.y, -0.32, 0.15);
+        rightArmRef.current.rotation.z = THREE.MathUtils.lerp(rightArmRef.current.rotation.z, 0.15, 0.15);
+      }
+
+      if (distToSpot > 0.3) {
+        // Walk smoothly towards gathering spot
         const dir = new THREE.Vector3().subVectors(targetPos.current, currentPos.current).normalize();
-        const step = Math.min(delta * (speed * 1.2), distToSpot);
+        const step = Math.min(delta * (speed * 1.3), distToSpot);
         currentPos.current.add(dir.multiplyScalar(step));
         groupRef.current.position.copy(currentPos.current);
 
@@ -79,10 +91,8 @@ export function AutonomousWalkingVisitor({
         const legAngle = Math.sin(walkCycle.current) * 0.45;
         if (leftLegRef.current) leftLegRef.current.rotation.x = legAngle;
         if (rightLegRef.current) rightLegRef.current.rotation.x = -legAngle;
-        if (leftArmRef.current) leftArmRef.current.rotation.x = -legAngle * 0.5;
-        if (rightArmRef.current) rightArmRef.current.rotation.x = legAngle * 0.5;
       } else {
-        // Arrived at gathering spot: Face whiteboard and raise arms to hold board!
+        // Arrived at gathering spot: Face whiteboard
         groupRef.current.rotation.y = THREE.MathUtils.lerp(
           groupRef.current.rotation.y,
           activityFacing,
@@ -91,16 +101,6 @@ export function AutonomousWalkingVisitor({
 
         if (leftLegRef.current) leftLegRef.current.rotation.x = THREE.MathUtils.lerp(leftLegRef.current.rotation.x, 0, 0.1);
         if (rightLegRef.current) rightLegRef.current.rotation.x = THREE.MathUtils.lerp(rightLegRef.current.rotation.x, 0, 0.1);
-
-        // Raise arms forward to hold board
-        if (leftArmRef.current) {
-          leftArmRef.current.rotation.x = THREE.MathUtils.lerp(leftArmRef.current.rotation.x, -1.25, 0.1);
-          leftArmRef.current.rotation.z = THREE.MathUtils.lerp(leftArmRef.current.rotation.z, -0.15, 0.1);
-        }
-        if (rightArmRef.current) {
-          rightArmRef.current.rotation.x = THREE.MathUtils.lerp(rightArmRef.current.rotation.x, -1.25, 0.1);
-          rightArmRef.current.rotation.z = THREE.MathUtils.lerp(rightArmRef.current.rotation.z, 0.15, 0.1);
-        }
 
         // Subtle attentive breathing motion
         walkCycle.current += delta * 1.5;

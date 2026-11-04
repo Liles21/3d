@@ -207,8 +207,8 @@ export const Scene = memo(function Scene({
             outfit={{ topColor: "#0284c7", bottomColor: "#1e293b", hairColor: "#171717" }}
             isCelebrating={isCelebrating}
             isActivityActive={isActivityActive}
-            activitySpot={[-2.8, 0, 6.2]}
-            activityFacing={0.42}
+            activitySpot={[-2.4, 0, 7.0]}
+            activityFacing={0.45}
           />
 
           {/* Visitor 2: Slot Left-Mid (Indigo hoodie) */}
@@ -226,8 +226,8 @@ export const Scene = memo(function Scene({
             outfit={{ topColor: "#4f46e5", bottomColor: "#334155", hairColor: "#78350f" }}
             isCelebrating={isCelebrating}
             isActivityActive={isActivityActive}
-            activitySpot={[-1.7, 0, 6.8]}
-            activityFacing={0.24}
+            activitySpot={[-1.4, 0, 7.4]}
+            activityFacing={0.25}
           />
 
           {/* Visitor 3: Slot Left-Center (Red jacket) */}
@@ -245,7 +245,7 @@ export const Scene = memo(function Scene({
             outfit={{ topColor: "#dc2626", bottomColor: "#0f172a", hairColor: "#27272a" }}
             isCelebrating={isCelebrating}
             isActivityActive={isActivityActive}
-            activitySpot={[-0.6, 0, 7.2]}
+            activitySpot={[-0.4, 0, 7.6]}
             activityFacing={0.08}
           />
 
@@ -264,7 +264,7 @@ export const Scene = memo(function Scene({
             outfit={{ topColor: "#059669", bottomColor: "#1e293b", hairColor: "#451a03" }}
             isCelebrating={isCelebrating}
             isActivityActive={isActivityActive}
-            activitySpot={[0.6, 0, 7.2]}
+            activitySpot={[0.6, 0, 7.6]}
             activityFacing={-0.08}
           />
 
@@ -281,8 +281,8 @@ export const Scene = memo(function Scene({
             outfit={{ topColor: "#ec4899", bottomColor: "#1e293b", hairColor: "#1c1917" }}
             isCelebrating={isCelebrating}
             isActivityActive={isActivityActive}
-            activitySpot={[1.7, 0, 6.8]}
-            activityFacing={-0.24}
+            activitySpot={[1.6, 0, 7.4]}
+            activityFacing={-0.25}
           />
 
           {/* Visitor 6: Slot Right-Outer (Amber outdoor jacket) */}
@@ -298,24 +298,8 @@ export const Scene = memo(function Scene({
             outfit={{ topColor: "#d97706", bottomColor: "#1e293b", hairColor: "#451a03" }}
             isCelebrating={isCelebrating}
             isActivityActive={isActivityActive}
-            activitySpot={[2.8, 0, 6.2]}
-            activityFacing={-0.42}
-          />
-
-          {/* Visitor 7: Slot Rear Observer (Violet hoodie) */}
-          <AutonomousWalkingVisitor
-            waypoints={[
-              [0, 0, 12.0],
-              [-2.5, 0, 15.0],
-              [2.5, 0, 15.0],
-            ]}
-            speed={1.45}
-            startDelay={1.2}
-            outfit={{ topColor: "#7c3aed", bottomColor: "#1e293b", hairColor: "#262626" }}
-            isCelebrating={isCelebrating}
-            isActivityActive={isActivityActive}
-            activitySpot={[0, 0, 8.1]}
-            activityFacing={0}
+            activitySpot={[2.6, 0, 7.0]}
+            activityFacing={-0.45}
           />
 
           {/* Party Celebration 3D Lights, Balloons & Confetti */}

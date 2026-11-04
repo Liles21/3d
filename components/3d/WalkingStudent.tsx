@@ -54,7 +54,7 @@ export function WalkingStudent({
   // Update target when activeZone or isActivityActive changes
   useMemo(() => {
     if (isActivityActive) {
-      targetPos.current.set(0, 0, 5.0);
+      targetPos.current.set(-1.4, 0, 5.0);
     } else {
       const dest = ZONE_DESTINATIONS[activeZone] || [0, 0, 6.5];
       targetPos.current.set(dest[0], dest[1], dest[2]);
@@ -101,22 +101,23 @@ export function WalkingStudent({
       groupRef.current.position.y = Math.abs(Math.sin(walkCycle.current * 2)) * 0.05;
     } else {
       isWalking.current = false;
-      const targetFacing = isActivityActive ? 0 : (ZONE_FACING[activeZone] ?? 0);
+      const targetFacing = isActivityActive ? 0.2 : (ZONE_FACING[activeZone] ?? 0);
       groupRef.current.rotation.y = THREE.MathUtils.lerp(
         groupRef.current.rotation.y,
         targetFacing,
         0.08
       );
 
-      // 1. Activity Mode: Presenting discussion question holding board!
+      // 1. Activity Mode: Presenting beside the board with welcoming gesture
       if (isActivityActive) {
         if (leftArmRef.current) {
-          leftArmRef.current.rotation.x = THREE.MathUtils.lerp(leftArmRef.current.rotation.x, -1.25, 0.1);
-          leftArmRef.current.rotation.z = THREE.MathUtils.lerp(leftArmRef.current.rotation.z, -0.15, 0.1);
+          leftArmRef.current.rotation.x = THREE.MathUtils.lerp(leftArmRef.current.rotation.x, -0.82, 0.1);
+          leftArmRef.current.rotation.y = THREE.MathUtils.lerp(leftArmRef.current.rotation.y, 0.25, 0.1);
         }
         if (rightArmRef.current) {
-          rightArmRef.current.rotation.x = THREE.MathUtils.lerp(rightArmRef.current.rotation.x, -1.25, 0.1);
-          rightArmRef.current.rotation.z = THREE.MathUtils.lerp(rightArmRef.current.rotation.z, 0.15, 0.1);
+          rightArmRef.current.rotation.x = THREE.MathUtils.lerp(rightArmRef.current.rotation.x, -1.05, 0.1);
+          rightArmRef.current.rotation.y = THREE.MathUtils.lerp(rightArmRef.current.rotation.y, -0.35, 0.1);
+          rightArmRef.current.rotation.z = THREE.MathUtils.lerp(rightArmRef.current.rotation.z, 0.35, 0.1);
         }
         if (leftLegRef.current) leftLegRef.current.rotation.x = THREE.MathUtils.lerp(leftLegRef.current.rotation.x, 0, 0.1);
         if (rightLegRef.current) rightLegRef.current.rotation.x = THREE.MathUtils.lerp(rightLegRef.current.rotation.x, 0, 0.1);

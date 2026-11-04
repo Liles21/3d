@@ -144,7 +144,7 @@ export default function HomePage() {
         timeOfDay={timeOfDay}
         onSelectZone={handleSelectZone}
         onOpenConcept={() => setIsConceptModalOpen(true)}
-        isModalOpen={isConceptModalOpen || isActivityModalOpen}
+        isModalOpen={isConceptModalOpen}
         isCelebrating={isCelebrating}
         isActivityActive={isActivityActive}
         currentQuestionIndex={activeQuestionIndex}
