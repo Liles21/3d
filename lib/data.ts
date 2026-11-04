@@ -246,60 +246,150 @@ export const ACTIVITY_QUESTIONS: ActivityQuestion[] = [
     question: "Why should we follow ICT policies in the classroom?",
     category: "Digital Citizenship & Ethics",
     badge: "Policy & Safety",
-    hint: "Think about device longevity, personal data safety, and respectful collaborative equipment sharing in a community learning hub.",
-    keyPoints: [
-      "Protects expensive solar-powered computers and sensitive IoT hardware from physical and electrical damage.",
-      "Ensures cybersecurity, online privacy, and fair internet bandwidth distribution for all students.",
-      "Cultivates ethical digital citizenship and discipline necessary for modern professional workplaces.",
+    options: [
+      {
+        id: "A",
+        text: "To limit computer usage so devices are rarely turned on during the day.",
+        isCorrect: false,
+      },
+      {
+        id: "B",
+        text: "To protect solar hardware, maintain cybersecurity, and ensure respectful shared device stewardship.",
+        isCorrect: true,
+      },
+      {
+        id: "C",
+        text: "Only to prevent students from playing games during break times.",
+        isCorrect: false,
+      },
+      {
+        id: "D",
+        text: "Because school rules require memorizing ICT manuals without actual computer usage.",
+        isCorrect: false,
+      },
     ],
+    explanation:
+      "Following ICT policies protects sensitive solar-powered laptops from hardware damage, safeguards personal digital privacy, and ensures equal access for every student in the forest.",
   },
   {
     id: 2,
     question: "How can we use technology responsibly while protecting nature?",
     category: "Eco-Tech Stewardship",
     badge: "Sustainability",
-    hint: "Consider energy management, reducing e-waste, respecting wildlife, and applying leave-no-trace ethics with battery devices.",
-    keyPoints: [
-      "Power devices exclusively with renewable solar energy and power-down during inactivity to conserve battery storage.",
-      "Avoid single-use tech waste and practice responsible e-waste recycling and modular hardware re-use.",
-      "Maintain quiet study volumes and minimal cable footprints to protect forest wildlife habitats.",
+    options: [
+      {
+        id: "A",
+        text: "By utilizing 100% solar microgrid power, powering down idle devices, and avoiding e-waste in forest habitats.",
+        isCorrect: true,
+      },
+      {
+        id: "B",
+        text: "By burying depleted batteries under trees so they degrade into the soil.",
+        isCorrect: false,
+      },
+      {
+        id: "C",
+        text: "By keeping computers running 24/7 on maximum brightness to illuminate the woods.",
+        isCorrect: false,
+      },
+      {
+        id: "D",
+        text: "By printing all digital lessons on paper instead of viewing them on digital screens.",
+        isCorrect: false,
+      },
     ],
+    explanation:
+      "Responsible eco-tech balances digital power with conservation by utilizing clean solar energy, recycling devices, and adhering to strict leave-no-trace protocols in the forest.",
   },
   {
     id: 3,
     question: "How can computers and the internet help students learn in this kind of classroom?",
     category: "Digital Learning & IoT",
     badge: "EdTech Innovation",
-    hint: "Connect classroom laptops to offline knowledge servers (RACHEL/Wikipedia), environmental sensors, and multimedia field journals.",
-    keyPoints: [
-      "Allows real-time sensor data analysis of soil moisture, pH, and photosynthesis from the living garden table.",
-      "Provides offline access to vast global encyclopedias, digital simulations, and educational field guides in remote areas.",
-      "Enables students to code eco-monitoring programs and create digital maps of local forest biodiversity.",
+    options: [
+      {
+        id: "A",
+        text: "They replace teachers completely so students only interact through automated chatbots.",
+        isCorrect: false,
+      },
+      {
+        id: "B",
+        text: "By streaming non-educational entertainment all day without curriculum guidelines.",
+        isCorrect: false,
+      },
+      {
+        id: "C",
+        text: "By analyzing live IoT soil sensor telemetry from the living garden table and accessing offline educational databases.",
+        isCorrect: true,
+      },
+      {
+        id: "D",
+        text: "By transforming the open forest into an enclosed indoor gaming lounge.",
+        isCorrect: false,
+      },
     ],
+    explanation:
+      "Computers connect theoretical science with real-time nature telemetry—reading soil moisture and pH, coding plant dashboards, and accessing offline encyclopedias in rural areas.",
   },
   {
     id: 4,
     question: "What are the advantages of studying in a classroom surrounded by nature?",
     category: "Biophilic Education",
     badge: "Well-Being & Focus",
-    hint: "Reflect on how natural sunlight, fresh air, and greenery reduce cognitive fatigue and improve critical thinking.",
-    keyPoints: [
-      "Natural oxygen and greenery reduce mental fatigue, stress, and anxiety compared to enclosed concrete rooms.",
-      "Immediate hands-on contact with plants and trees turns theoretical science into living interactive experiments.",
-      "Deepens emotional empathy and personal stewardship toward forest conservation in the Caraga region.",
+    options: [
+      {
+        id: "A",
+        text: "It reduces mental fatigue and stress through natural greenery while turning local flora into living science experiments.",
+        isCorrect: true,
+      },
+      {
+        id: "B",
+        text: "It allows students to skip assignments by wandering into the deep jungle.",
+        isCorrect: false,
+      },
+      {
+        id: "C",
+        text: "It eliminates the need for books, laptops, and structured learning.",
+        isCorrect: false,
+      },
+      {
+        id: "D",
+        text: "It makes school days shorter because solar power only lasts 30 minutes.",
+        isCorrect: false,
+      },
     ],
+    explanation:
+      "Biophilic learning surrounded by trees lowers stress, restores attention spans, and makes botanical and environmental science direct, tactile, and unforgettable.",
   },
   {
     id: 5,
     question: "Can we use technology while still taking care of our environment? Why?",
     category: "Harmonious Synthesis",
     badge: "Future Outlook",
-    hint: "Consider sustainable architecture, biodegradable materials, solar microgrids, and tech-driven environmental conservation.",
-    keyPoints: [
-      "YES: Technology and nature are not opposites—tech provides the monitoring tools needed to safeguard ecosystems.",
-      "Solar-powered microgrids and modular bamboo architecture prove high-tech facilities can have net-negative carbon footprints.",
-      "Educating youth with eco-integrated ICT prepares future innovators to build sustainable climate and conservation solutions.",
+    options: [
+      {
+        id: "A",
+        text: "No, because all computing technology inevitably harms ecosystems regardless of design.",
+        isCorrect: false,
+      },
+      {
+        id: "B",
+        text: "Yes, because modern green tech—like solar microgrids, bamboo structures, and IoT sensors—empowers us to monitor and protect ecosystems.",
+        isCorrect: true,
+      },
+      {
+        id: "C",
+        text: "No, because electronics cannot function safely outdoors in tropical climates.",
+        isCorrect: false,
+      },
+      {
+        id: "D",
+        text: "Yes, but only if computers are prohibited from scientific study and environmental monitoring.",
+        isCorrect: false,
+      },
     ],
+    explanation:
+      "Technology and conservation reinforce each other: renewable energy and environmental IoT tools provide the exact solutions needed to monitor and safeguard biodiversity in Caraga.",
   },
 ];
 

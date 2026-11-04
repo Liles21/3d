@@ -113,18 +113,18 @@ export const ClassroomActivityBoard = memo(function ClassroomActivityBoard({
                 <div className="flex items-center gap-2">
                   <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
                   <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-emerald-800">
-                    Classroom Activity • {currentQ.category}
+                    🎮 Eco-ICT Quiz • {currentQ.category}
                   </span>
                 </div>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800">
-                  Question {currentQ.id} of {ACTIVITY_QUESTIONS.length}
+                  Challenge {currentQ.id} of {ACTIVITY_QUESTIONS.length}
                 </span>
               </div>
 
               {/* Main Activity Question */}
               <div className="mb-4">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 mb-1">
-                  Discussion Prompt
+                  Interactive Game Question
                 </p>
                 <h3 className="text-xl font-extrabold text-slate-900 leading-snug tracking-tight">
                   &ldquo;{currentQ.question}&rdquo;
@@ -150,9 +150,9 @@ export const ClassroomActivityBoard = memo(function ClassroomActivityBoard({
 
                 <button
                   onClick={onOpenActivityModal}
-                  className="px-3 py-1.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-900 text-xs font-extrabold transition-all cursor-pointer border border-emerald-300"
+                  className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold transition-all cursor-pointer shadow-md"
                 >
-                  Open Discussion Sheet 📋
+                  Play Quiz Game 🎮
                 </button>
               </div>
             </div>

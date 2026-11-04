@@ -1,8 +1,8 @@
 "use client";
 
 import {
-  ClipboardList,
   FileText,
+  Gamepad2,
   Moon,
   PartyPopper,
   Sun,
@@ -100,10 +100,10 @@ export function Header({
         className="pointer-events-auto flex items-center gap-1 sm:gap-1.5 md:gap-2 shrink-0"
         style={{ pointerEvents: "auto", height: "40px" }}
       >
-        {/* 📋 CLASSROOM ACTIVITY BUTTON */}
+        {/* 🎮 INTERACTIVE ACTIVITY GAME BUTTON */}
         <button
           onClick={onToggleActivity}
-          title={isActivityActive ? "Close Activity" : "Classroom Discussion Activity & Questions"}
+          title={isActivityActive ? "Close Activity Game" : "Start Interactive Eco-ICT Quiz Game"}
           className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 rounded-2xl font-extrabold text-[11px] sm:text-xs shadow-xl border cursor-pointer transition-all hover:scale-105 active:scale-95 whitespace-nowrap shrink-0 ${
             isActivityActive
               ? "bg-emerald-600 text-white border-emerald-400 shadow-emerald-500/30"
@@ -111,9 +111,9 @@ export function Header({
           }`}
           style={{ height: "40px" }}
         >
-          <ClipboardList className={`w-3.5 h-3.5 ${isActivityActive ? "text-white" : "text-emerald-700"}`} />
-          <span className="hidden sm:inline">{isActivityActive ? "Activity 📋" : "Activity"}</span>
-          <span className="sm:hidden">Task</span>
+          <Gamepad2 className={`w-3.5 h-3.5 ${isActivityActive ? "text-white" : "text-emerald-700"}`} />
+          <span className="hidden sm:inline">{isActivityActive ? "Game 🎮" : "Activity 🎮"}</span>
+          <span className="sm:hidden">Game</span>
         </button>
 
         {/* 🎉 CELEBRATE PARTY BUTTON */}

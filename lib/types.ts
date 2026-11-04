@@ -33,12 +33,18 @@ export interface Member {
   avatarColor: string;
 }
 
+export interface QuizOption {
+  id: "A" | "B" | "C" | "D";
+  text: string;
+  isCorrect: boolean;
+}
+
 export interface ActivityQuestion {
   id: number;
   question: string;
   category: string;
   badge: string;
-  hint: string;
-  keyPoints: string[];
+  options: QuizOption[];
+  explanation: string;
 }
 
