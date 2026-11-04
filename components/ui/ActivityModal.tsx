@@ -185,7 +185,7 @@ export function ActivityModal({
 
   return (
     <div
-      className="fixed bottom-2 right-2 sm:bottom-4 sm:right-4 z-40 w-full max-w-md sm:max-w-lg pointer-events-none flex flex-col justify-end"
+      className="fixed bottom-2 right-2 left-2 sm:left-auto sm:bottom-4 sm:right-4 z-40 max-w-md sm:max-w-lg pointer-events-none flex flex-col justify-end"
       style={{
         zIndex: 40,
         pointerEvents: "none",
