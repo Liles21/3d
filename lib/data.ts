@@ -1,4 +1,4 @@
-import { Member, ZoneData } from "./types";
+import { ActivityQuestion, Member, ZoneData } from "./types";
 
 export const PROJECT_TITLE = "Nature Table ICT Classroom in the Forest";
 export const PROJECT_SUBTITLE = "Eco-Literacy & Digital Inclusion in Caraga";
@@ -237,6 +237,69 @@ export const ZONES: ZoneData[] = [
         { label: "Focus", value: "Sustainable EdTech & Conservation" },
       ],
     },
+  },
+];
+
+export const ACTIVITY_QUESTIONS: ActivityQuestion[] = [
+  {
+    id: 1,
+    question: "Why should we follow ICT policies in the classroom?",
+    category: "Digital Citizenship & Ethics",
+    badge: "Policy & Safety",
+    hint: "Think about device longevity, personal data safety, and respectful collaborative equipment sharing in a community learning hub.",
+    keyPoints: [
+      "Protects expensive solar-powered computers and sensitive IoT hardware from physical and electrical damage.",
+      "Ensures cybersecurity, online privacy, and fair internet bandwidth distribution for all students.",
+      "Cultivates ethical digital citizenship and discipline necessary for modern professional workplaces.",
+    ],
+  },
+  {
+    id: 2,
+    question: "How can we use technology responsibly while protecting nature?",
+    category: "Eco-Tech Stewardship",
+    badge: "Sustainability",
+    hint: "Consider energy management, reducing e-waste, respecting wildlife, and applying leave-no-trace ethics with battery devices.",
+    keyPoints: [
+      "Power devices exclusively with renewable solar energy and power-down during inactivity to conserve battery storage.",
+      "Avoid single-use tech waste and practice responsible e-waste recycling and modular hardware re-use.",
+      "Maintain quiet study volumes and minimal cable footprints to protect forest wildlife habitats.",
+    ],
+  },
+  {
+    id: 3,
+    question: "How can computers and the internet help students learn in this kind of classroom?",
+    category: "Digital Learning & IoT",
+    badge: "EdTech Innovation",
+    hint: "Connect classroom laptops to offline knowledge servers (RACHEL/Wikipedia), environmental sensors, and multimedia field journals.",
+    keyPoints: [
+      "Allows real-time sensor data analysis of soil moisture, pH, and photosynthesis from the living garden table.",
+      "Provides offline access to vast global encyclopedias, digital simulations, and educational field guides in remote areas.",
+      "Enables students to code eco-monitoring programs and create digital maps of local forest biodiversity.",
+    ],
+  },
+  {
+    id: 4,
+    question: "What are the advantages of studying in a classroom surrounded by nature?",
+    category: "Biophilic Education",
+    badge: "Well-Being & Focus",
+    hint: "Reflect on how natural sunlight, fresh air, and greenery reduce cognitive fatigue and improve critical thinking.",
+    keyPoints: [
+      "Natural oxygen and greenery reduce mental fatigue, stress, and anxiety compared to enclosed concrete rooms.",
+      "Immediate hands-on contact with plants and trees turns theoretical science into living interactive experiments.",
+      "Deepens emotional empathy and personal stewardship toward forest conservation in the Caraga region.",
+    ],
+  },
+  {
+    id: 5,
+    question: "Can we use technology while still taking care of our environment? Why?",
+    category: "Harmonious Synthesis",
+    badge: "Future Outlook",
+    hint: "Consider sustainable architecture, biodegradable materials, solar microgrids, and tech-driven environmental conservation.",
+    keyPoints: [
+      "YES: Technology and nature are not opposites—tech provides the monitoring tools needed to safeguard ecosystems.",
+      "Solar-powered microgrids and modular bamboo architecture prove high-tech facilities can have net-negative carbon footprints.",
+      "Educating youth with eco-integrated ICT prepares future innovators to build sustainable climate and conservation solutions.",
+    ],
   },
 ];
 

@@ -33,3 +33,12 @@ export interface Member {
   avatarColor: string;
 }
 
+export interface ActivityQuestion {
+  id: number;
+  question: string;
+  category: string;
+  badge: string;
+  hint: string;
+  keyPoints: string[];
+}
+

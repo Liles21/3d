@@ -9,22 +9,31 @@ import { ZoneId } from "@/lib/types";
 interface CameraManagerProps {
   activeZone: ZoneId;
   orbitControlsRef: React.RefObject<any>;
+  isActivityActive?: boolean;
 }
 
-export function CameraManager({ activeZone, orbitControlsRef }: CameraManagerProps) {
+export function CameraManager({ activeZone, orbitControlsRef, isActivityActive = false }: CameraManagerProps) {
   const { camera } = useThree();
   const targetCamPos = useRef(new THREE.Vector3(0, 18, 26));
   const targetLookAt = useRef(new THREE.Vector3(0, 1, 0));
   const isTransitioning = useRef(true);
 
   useEffect(() => {
+    if (isActivityActive) {
+      // Elevated close-up view of the gathered students and activity discussion whiteboard
+      targetCamPos.current.set(0, 3.8, 11.2);
+      targetLookAt.current.set(0, 1.4, 5.5);
+      isTransitioning.current = true;
+      return;
+    }
+
     const zone = ZONES.find((z) => z.id === activeZone);
     if (zone) {
       targetCamPos.current.set(...zone.cameraPosition);
       targetLookAt.current.set(...zone.targetPosition);
       isTransitioning.current = true;
     }
-  }, [activeZone]);
+  }, [activeZone, isActivityActive]);
 
   useFrame((_, delta) => {
     if (!isTransitioning.current) return;

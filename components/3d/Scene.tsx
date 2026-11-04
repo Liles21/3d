@@ -17,6 +17,7 @@ import { ProjectBillboard } from "./ProjectBillboard";
 import { WalkingStudent } from "./WalkingStudent";
 import { PartyEffects } from "./PartyEffects";
 import { AutonomousWalkingVisitor } from "./AutonomousWalkingVisitor";
+import { ClassroomActivityBoard } from "./ClassroomActivityBoard";
 
 interface SceneProps {
   activeZone: ZoneId;
@@ -25,6 +26,11 @@ interface SceneProps {
   onOpenConcept: () => void;
   isModalOpen?: boolean;
   isCelebrating?: boolean;
+  isActivityActive?: boolean;
+  currentQuestionIndex?: number;
+  onNextQuestion?: () => void;
+  onPrevQuestion?: () => void;
+  onOpenActivityModal?: () => void;
 }
 
 interface MarkerConfig {
@@ -80,6 +86,11 @@ export const Scene = memo(function Scene({
   onOpenConcept,
   isModalOpen = false,
   isCelebrating = false,
+  isActivityActive = false,
+  currentQuestionIndex = 0,
+  onNextQuestion = () => {},
+  onPrevQuestion = () => {},
+  onOpenActivityModal = () => {},
 }: SceneProps) {
   const orbitControlsRef = useRef<OrbitControlsImpl>(null);
 
@@ -111,10 +122,11 @@ export const Scene = memo(function Scene({
           {/* Dynamic Sun/Moon and Atmospheric Lighting */}
           <LightingEnvironment timeOfDay={timeOfDay} />
 
-          {/* Smooth Camera Motion Manager */}
+          {/* Smooth Camera Motion Manager (Pans to Activity during Classroom Activity) */}
           <CameraManager
             activeZone={activeZone}
             orbitControlsRef={orbitControlsRef}
+            isActivityActive={isActivityActive}
           />
 
           {/* User Exploration Controls with Buttery Smooth Damping & Scroll */}
@@ -157,14 +169,30 @@ export const Scene = memo(function Scene({
             isModalOpen={isModalOpen}
           />
 
-          {/* Interactive 3D Animated Formal Tuxedo Student Character */}
-          <WalkingStudent activeZone={activeZone} isCelebrating={isCelebrating} />
+          {/* Master Classroom Activity Presentation Whiteboard & Easel */}
+          <ClassroomActivityBoard
+            currentQuestionIndex={currentQuestionIndex}
+            onNextQuestion={onNextQuestion}
+            onPrevQuestion={onPrevQuestion}
+            onOpenActivityModal={onOpenActivityModal}
+            isActivityActive={isActivityActive}
+            isModalOpen={isModalOpen}
+          />
+
+          {/* Interactive 3D Animated Formal Tuxedo Student Character (Activity Presenter) */}
+          <WalkingStudent
+            activeZone={activeZone}
+            isCelebrating={isCelebrating}
+            isActivityActive={isActivityActive}
+          />
 
           {/* =========================================================================
-              AUTONOMOUS WALKING HUMAN VISITORS (WALKING AROUND THE FORESTS & TRAILS)
-              ALL DANCE WHEN CELEBRATING!
+              AUTONOMOUS WALKING HUMAN VISITORS
+              - Walk freely around trails during exploration
+              - Dance synchronously when Celebrate mode is on
+              - GATHER TOGETHER AND HOLD PRESENTATION BOARDS during Activity mode!
           ========================================================================= */}
-          {/* Visitor 1: Strolling along the Paved Road (Cyan eco-jacket) */}
+          {/* Visitor 1: Slot Left-Outer (Cyan eco-jacket) */}
           <AutonomousWalkingVisitor
             waypoints={[
               [1.4, 0, 32.0],
@@ -178,9 +206,12 @@ export const Scene = memo(function Scene({
             startDelay={0}
             outfit={{ topColor: "#0284c7", bottomColor: "#1e293b", hairColor: "#171717" }}
             isCelebrating={isCelebrating}
+            isActivityActive={isActivityActive}
+            activitySpot={[-2.8, 0, 6.2]}
+            activityFacing={0.42}
           />
 
-          {/* Visitor 2: Walking between Central Plaza and School Library (Indigo hoodie) */}
+          {/* Visitor 2: Slot Left-Mid (Indigo hoodie) */}
           <AutonomousWalkingVisitor
             waypoints={[
               [-3.5, 0, 8.5],
@@ -194,9 +225,12 @@ export const Scene = memo(function Scene({
             startDelay={2.5}
             outfit={{ topColor: "#4f46e5", bottomColor: "#334155", hairColor: "#78350f" }}
             isCelebrating={isCelebrating}
+            isActivityActive={isActivityActive}
+            activitySpot={[-1.7, 0, 6.8]}
+            activityFacing={0.24}
           />
 
-          {/* Visitor 3: Walking between Central Plaza and Health Outpost (Red jacket) */}
+          {/* Visitor 3: Slot Left-Center (Red jacket) */}
           <AutonomousWalkingVisitor
             waypoints={[
               [3.5, 0, 8.5],
@@ -210,9 +244,12 @@ export const Scene = memo(function Scene({
             startDelay={4.2}
             outfit={{ topColor: "#dc2626", bottomColor: "#0f172a", hairColor: "#27272a" }}
             isCelebrating={isCelebrating}
+            isActivityActive={isActivityActive}
+            activitySpot={[-0.6, 0, 7.2]}
+            activityFacing={0.08}
           />
 
-          {/* Visitor 4: Circuit Walker around Classroom Perimeter Trail (Emerald polo) */}
+          {/* Visitor 4: Slot Right-Center (Emerald polo) */}
           <AutonomousWalkingVisitor
             waypoints={[
               [0, 0, 5.2],
@@ -226,9 +263,12 @@ export const Scene = memo(function Scene({
             startDelay={1.8}
             outfit={{ topColor: "#059669", bottomColor: "#1e293b", hairColor: "#451a03" }}
             isCelebrating={isCelebrating}
+            isActivityActive={isActivityActive}
+            activitySpot={[0.6, 0, 7.2]}
+            activityFacing={-0.08}
           />
 
-          {/* Visitor 5: Exploring around Project Billboard & Plaza (Pink casual sweater) */}
+          {/* Visitor 5: Slot Right-Mid (Pink casual sweater) */}
           <AutonomousWalkingVisitor
             waypoints={[
               [-5.0, 0, 8.5],
@@ -240,6 +280,42 @@ export const Scene = memo(function Scene({
             startDelay={3.1}
             outfit={{ topColor: "#ec4899", bottomColor: "#1e293b", hairColor: "#1c1917" }}
             isCelebrating={isCelebrating}
+            isActivityActive={isActivityActive}
+            activitySpot={[1.7, 0, 6.8]}
+            activityFacing={-0.24}
+          />
+
+          {/* Visitor 6: Slot Right-Outer (Amber outdoor jacket) */}
+          <AutonomousWalkingVisitor
+            waypoints={[
+              [5.0, 0, 8.5],
+              [8.5, 0, 11.0],
+              [10.5, 0, 8.0],
+              [7.0, 0, 6.5],
+            ]}
+            speed={1.55}
+            startDelay={2.1}
+            outfit={{ topColor: "#d97706", bottomColor: "#1e293b", hairColor: "#451a03" }}
+            isCelebrating={isCelebrating}
+            isActivityActive={isActivityActive}
+            activitySpot={[2.8, 0, 6.2]}
+            activityFacing={-0.42}
+          />
+
+          {/* Visitor 7: Slot Rear Observer (Violet hoodie) */}
+          <AutonomousWalkingVisitor
+            waypoints={[
+              [0, 0, 12.0],
+              [-2.5, 0, 15.0],
+              [2.5, 0, 15.0],
+            ]}
+            speed={1.45}
+            startDelay={1.2}
+            outfit={{ topColor: "#7c3aed", bottomColor: "#1e293b", hairColor: "#262626" }}
+            isCelebrating={isCelebrating}
+            isActivityActive={isActivityActive}
+            activitySpot={[0, 0, 8.1]}
+            activityFacing={0}
           />
 
           {/* Party Celebration 3D Lights, Balloons & Confetti */}

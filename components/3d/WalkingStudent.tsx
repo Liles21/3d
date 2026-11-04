@@ -8,6 +8,7 @@ import { ZoneId } from "@/lib/types";
 interface WalkingStudentProps {
   activeZone: ZoneId;
   isCelebrating?: boolean;
+  isActivityActive?: boolean;
 }
 
 // Ground walkway destinations corresponding to each interactive zone
@@ -32,7 +33,11 @@ const ZONE_FACING: Record<ZoneId, number> = {
   billboard: -Math.PI / 4,
 };
 
-export function WalkingStudent({ activeZone, isCelebrating = false }: WalkingStudentProps) {
+export function WalkingStudent({
+  activeZone,
+  isCelebrating = false,
+  isActivityActive = false,
+}: WalkingStudentProps) {
   const groupRef = useRef<THREE.Group>(null);
   const leftLegRef = useRef<THREE.Group>(null);
   const rightLegRef = useRef<THREE.Group>(null);
@@ -46,11 +51,15 @@ export function WalkingStudent({ activeZone, isCelebrating = false }: WalkingStu
   const walkCycle = useRef(0);
   const isWalking = useRef(false);
 
-  // Update target when activeZone changes
+  // Update target when activeZone or isActivityActive changes
   useMemo(() => {
-    const dest = ZONE_DESTINATIONS[activeZone] || [0, 0, 6.5];
-    targetPos.current.set(dest[0], dest[1], dest[2]);
-  }, [activeZone]);
+    if (isActivityActive) {
+      targetPos.current.set(0, 0, 5.0);
+    } else {
+      const dest = ZONE_DESTINATIONS[activeZone] || [0, 0, 6.5];
+      targetPos.current.set(dest[0], dest[1], dest[2]);
+    }
+  }, [activeZone, isActivityActive]);
 
   useFrame((_, delta) => {
     if (!groupRef.current) return;
@@ -92,14 +101,29 @@ export function WalkingStudent({ activeZone, isCelebrating = false }: WalkingStu
       groupRef.current.position.y = Math.abs(Math.sin(walkCycle.current * 2)) * 0.05;
     } else {
       isWalking.current = false;
-      const targetFacing = ZONE_FACING[activeZone] ?? 0;
+      const targetFacing = isActivityActive ? 0 : (ZONE_FACING[activeZone] ?? 0);
       groupRef.current.rotation.y = THREE.MathUtils.lerp(
         groupRef.current.rotation.y,
         targetFacing,
         0.08
       );
 
-      // Party Celebration Dance or Idle Pose
+      // 1. Activity Mode: Presenting discussion question holding board!
+      if (isActivityActive) {
+        if (leftArmRef.current) {
+          leftArmRef.current.rotation.x = THREE.MathUtils.lerp(leftArmRef.current.rotation.x, -1.25, 0.1);
+          leftArmRef.current.rotation.z = THREE.MathUtils.lerp(leftArmRef.current.rotation.z, -0.15, 0.1);
+        }
+        if (rightArmRef.current) {
+          rightArmRef.current.rotation.x = THREE.MathUtils.lerp(rightArmRef.current.rotation.x, -1.25, 0.1);
+          rightArmRef.current.rotation.z = THREE.MathUtils.lerp(rightArmRef.current.rotation.z, 0.15, 0.1);
+        }
+        if (leftLegRef.current) leftLegRef.current.rotation.x = THREE.MathUtils.lerp(leftLegRef.current.rotation.x, 0, 0.1);
+        if (rightLegRef.current) rightLegRef.current.rotation.x = THREE.MathUtils.lerp(rightLegRef.current.rotation.x, 0, 0.1);
+        return;
+      }
+
+      // 2. Party Celebration Dance or Idle Pose
       if (isCelebrating) {
         walkCycle.current += delta * 8;
         // Joyful celebration dance: both arms pumping/waving in the air!
@@ -416,6 +440,37 @@ export function WalkingStudent({ activeZone, isCelebrating = false }: WalkingStu
           <meshStandardMaterial color="#fb7185" roughness={0.7} transparent opacity={0.35} />
         </mesh>
       </group>
+
+      {/* 6. Discussion Presentation Board (Held during Activity Mode) */}
+      {isActivityActive && (
+        <group position={[0, 1.08, 0.32]} rotation={[-0.15, 0, 0]}>
+          <mesh castShadow receiveShadow>
+            <boxGeometry args={[0.42, 0.52, 0.018]} />
+            <meshStandardMaterial color="#0f172a" roughness={0.5} />
+          </mesh>
+          <mesh position={[0, 0, 0.01]} receiveShadow>
+            <planeGeometry args={[0.38, 0.48]} />
+            <meshStandardMaterial color="#ffffff" roughness={0.25} />
+          </mesh>
+          {/* Gold Lapel Clip */}
+          <mesh position={[0, 0.24, 0.016]} castShadow>
+            <boxGeometry args={[0.14, 0.035, 0.02]} />
+            <meshStandardMaterial color="#d4af37" metalness={0.9} roughness={0.2} />
+          </mesh>
+          {/* Gold Header Band */}
+          <mesh position={[0, 0.17, 0.012]}>
+            <boxGeometry args={[0.32, 0.022, 0.005]} />
+            <meshStandardMaterial color="#059669" />
+          </mesh>
+          {/* Note Lines */}
+          {[-0.01, -0.06, -0.11, -0.16, -0.21].map((ly, lIdx) => (
+            <mesh key={ly} position={[0, ly, 0.012]}>
+              <boxGeometry args={[0.3, 0.008, 0.004]} />
+              <meshStandardMaterial color="#cbd5e1" />
+            </mesh>
+          ))}
+        </group>
+      )}
     </group>
   );
 }

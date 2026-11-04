@@ -7,8 +7,10 @@ import { Header } from "@/components/ui/Header";
 import { ZoneCards } from "@/components/ui/ZoneCards";
 import { ZoneModal } from "@/components/ui/ZoneModal";
 import { ConceptModal } from "@/components/ui/ConceptModal";
+import { ActivityModal } from "@/components/ui/ActivityModal";
 import { forestAudio } from "@/lib/audio";
 import { partyAudio } from "@/lib/partyAudio";
+import { ACTIVITY_QUESTIONS } from "@/lib/data";
 import { TimeOfDay, ZoneId } from "@/lib/types";
 import { PartyPopper, Sprout } from "lucide-react";
 
@@ -53,11 +55,33 @@ export default function HomePage() {
   const [isZoneModalOpen, setIsZoneModalOpen] = useState<boolean>(false);
   const [isConceptModalOpen, setIsConceptModalOpen] = useState<boolean>(false);
   const [isCelebrating, setIsCelebrating] = useState<boolean>(false);
+  const [isActivityActive, setIsActivityActive] = useState<boolean>(false);
+  const [isActivityModalOpen, setIsActivityModalOpen] = useState<boolean>(false);
+  const [activeQuestionIndex, setActiveQuestionIndex] = useState<number>(0);
 
   // Handle selecting a zone (from HUD, 3D marker, or billboard)
   const handleSelectZone = useCallback((zoneId: ZoneId) => {
     setActiveZone(zoneId);
     setIsZoneModalOpen(true);
+  }, []);
+
+  // Handle activity toggle (gathers students in 3D & activates activity presentation)
+  const handleToggleActivity = useCallback(() => {
+    setIsActivityActive((prev) => {
+      const next = !prev;
+      if (next) {
+        setIsActivityModalOpen(true);
+      }
+      return next;
+    });
+  }, []);
+
+  const handleNextQuestion = useCallback(() => {
+    setActiveQuestionIndex((prev) => (prev + 1) % ACTIVITY_QUESTIONS.length);
+  }, []);
+
+  const handlePrevQuestion = useCallback(() => {
+    setActiveQuestionIndex((prev) => (prev - 1 + ACTIVITY_QUESTIONS.length) % ACTIVITY_QUESTIONS.length);
   }, []);
 
   // Handle audio toggle
@@ -120,8 +144,13 @@ export default function HomePage() {
         timeOfDay={timeOfDay}
         onSelectZone={handleSelectZone}
         onOpenConcept={() => setIsConceptModalOpen(true)}
-        isModalOpen={isConceptModalOpen}
+        isModalOpen={isConceptModalOpen || isActivityModalOpen}
         isCelebrating={isCelebrating}
+        isActivityActive={isActivityActive}
+        currentQuestionIndex={activeQuestionIndex}
+        onNextQuestion={handleNextQuestion}
+        onPrevQuestion={handlePrevQuestion}
+        onOpenActivityModal={() => setIsActivityModalOpen(true)}
       />
 
       {/* Top Glassmorphic Navigation & Control Bar */}
@@ -130,10 +159,12 @@ export default function HomePage() {
         timeOfDay={timeOfDay}
         isAudioPlaying={isAudioPlaying}
         isCelebrating={isCelebrating}
+        isActivityActive={isActivityActive}
         onSelectZone={handleSelectZone}
         onChangeTimeOfDay={handleChangeTimeOfDay}
         onToggleAudio={handleToggleAudio}
         onToggleCelebrate={handleToggleCelebrate}
+        onToggleActivity={handleToggleActivity}
         onOpenConcept={() => setIsConceptModalOpen(true)}
       />
 
@@ -177,6 +208,16 @@ export default function HomePage() {
         isOpen={isConceptModalOpen}
         onClose={() => setIsConceptModalOpen(false)}
         onCelebrate={handleToggleCelebrate}
+      />
+
+      {/* Classroom Activity & Discussion Questions Modal */}
+      <ActivityModal
+        isOpen={isActivityModalOpen}
+        onClose={() => setIsActivityModalOpen(false)}
+        activeQuestionIndex={activeQuestionIndex}
+        onSelectQuestion={setActiveQuestionIndex}
+        isActivityActive={isActivityActive}
+        onToggleActivity={handleToggleActivity}
       />
     </main>
   );

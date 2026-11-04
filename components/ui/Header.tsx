@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ClipboardList,
   FileText,
   Moon,
   PartyPopper,
@@ -17,10 +18,12 @@ interface HeaderProps {
   timeOfDay: TimeOfDay;
   isAudioPlaying?: boolean;
   isCelebrating?: boolean;
+  isActivityActive?: boolean;
   onSelectZone: (zoneId: ZoneId) => void;
   onChangeTimeOfDay: (tod: TimeOfDay) => void;
   onToggleAudio?: () => void;
   onToggleCelebrate: () => void;
+  onToggleActivity?: () => void;
   onOpenConcept: () => void;
 }
 
@@ -28,9 +31,11 @@ export function Header({
   timeOfDay,
   isAudioPlaying,
   isCelebrating = false,
+  isActivityActive = false,
   onChangeTimeOfDay,
   onToggleAudio,
   onToggleCelebrate,
+  onToggleActivity,
   onOpenConcept,
 }: HeaderProps) {
   return (
@@ -95,6 +100,22 @@ export function Header({
         className="pointer-events-auto flex items-center gap-1 sm:gap-1.5 md:gap-2 shrink-0"
         style={{ pointerEvents: "auto", height: "40px" }}
       >
+        {/* 📋 CLASSROOM ACTIVITY BUTTON */}
+        <button
+          onClick={onToggleActivity}
+          title={isActivityActive ? "Close Activity" : "Classroom Discussion Activity & Questions"}
+          className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 rounded-2xl font-extrabold text-[11px] sm:text-xs shadow-xl border cursor-pointer transition-all hover:scale-105 active:scale-95 whitespace-nowrap shrink-0 ${
+            isActivityActive
+              ? "bg-emerald-600 text-white border-emerald-400 shadow-emerald-500/30"
+              : "bg-white/95 hover:bg-emerald-50 text-emerald-900 border-emerald-300"
+          }`}
+          style={{ height: "40px" }}
+        >
+          <ClipboardList className={`w-3.5 h-3.5 ${isActivityActive ? "text-white" : "text-emerald-700"}`} />
+          <span className="hidden sm:inline">{isActivityActive ? "Activity 📋" : "Activity"}</span>
+          <span className="sm:hidden">Task</span>
+        </button>
+
         {/* 🎉 CELEBRATE PARTY BUTTON */}
         <button
           onClick={onToggleCelebrate}

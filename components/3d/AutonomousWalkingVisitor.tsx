@@ -15,6 +15,9 @@ export interface AutonomousWalkingVisitorProps {
     shoeColor?: string;
   };
   isCelebrating?: boolean;
+  isActivityActive?: boolean;
+  activitySpot?: [number, number, number];
+  activityFacing?: number;
   startDelay?: number;
 }
 
@@ -23,6 +26,9 @@ export function AutonomousWalkingVisitor({
   speed = 1.8,
   outfit,
   isCelebrating = false,
+  isActivityActive = false,
+  activitySpot,
+  activityFacing = 0,
   startDelay = 0,
 }: AutonomousWalkingVisitorProps) {
   const groupRef = useRef<THREE.Group>(null);
@@ -50,7 +56,62 @@ export function AutonomousWalkingVisitor({
   useFrame((_, delta) => {
     if (!groupRef.current) return;
 
-    // Party Celebration Dance
+    // 1. Classroom Activity Mode: Gather together & hold discussion board!
+    if (isActivityActive && activitySpot) {
+      targetPos.current.set(activitySpot[0], 0, activitySpot[2]);
+      const distToSpot = currentPos.current.distanceTo(targetPos.current);
+
+      if (distToSpot > 0.15) {
+        // Walk towards gathering spot
+        const dir = new THREE.Vector3().subVectors(targetPos.current, currentPos.current).normalize();
+        const step = Math.min(delta * (speed * 1.2), distToSpot);
+        currentPos.current.add(dir.multiplyScalar(step));
+        groupRef.current.position.copy(currentPos.current);
+
+        const targetAngle = Math.atan2(dir.x, dir.z);
+        groupRef.current.rotation.y = THREE.MathUtils.lerp(
+          groupRef.current.rotation.y,
+          targetAngle,
+          Math.min(delta * 10, 0.25)
+        );
+
+        walkCycle.current += delta * 8;
+        const legAngle = Math.sin(walkCycle.current) * 0.45;
+        if (leftLegRef.current) leftLegRef.current.rotation.x = legAngle;
+        if (rightLegRef.current) rightLegRef.current.rotation.x = -legAngle;
+        if (leftArmRef.current) leftArmRef.current.rotation.x = -legAngle * 0.5;
+        if (rightArmRef.current) rightArmRef.current.rotation.x = legAngle * 0.5;
+      } else {
+        // Arrived at gathering spot: Face whiteboard and raise arms to hold board!
+        groupRef.current.rotation.y = THREE.MathUtils.lerp(
+          groupRef.current.rotation.y,
+          activityFacing,
+          0.1
+        );
+
+        if (leftLegRef.current) leftLegRef.current.rotation.x = THREE.MathUtils.lerp(leftLegRef.current.rotation.x, 0, 0.1);
+        if (rightLegRef.current) rightLegRef.current.rotation.x = THREE.MathUtils.lerp(rightLegRef.current.rotation.x, 0, 0.1);
+
+        // Raise arms forward to hold board
+        if (leftArmRef.current) {
+          leftArmRef.current.rotation.x = THREE.MathUtils.lerp(leftArmRef.current.rotation.x, -1.25, 0.1);
+          leftArmRef.current.rotation.z = THREE.MathUtils.lerp(leftArmRef.current.rotation.z, -0.15, 0.1);
+        }
+        if (rightArmRef.current) {
+          rightArmRef.current.rotation.x = THREE.MathUtils.lerp(rightArmRef.current.rotation.x, -1.25, 0.1);
+          rightArmRef.current.rotation.z = THREE.MathUtils.lerp(rightArmRef.current.rotation.z, 0.15, 0.1);
+        }
+
+        // Subtle attentive breathing motion
+        walkCycle.current += delta * 1.5;
+        if (bodyRef.current) {
+          bodyRef.current.position.y = Math.sin(walkCycle.current) * 0.02;
+        }
+      }
+      return;
+    }
+
+    // 2. Party Celebration Dance
     if (isCelebrating) {
       walkCycle.current += delta * 6;
       const danceCycle = walkCycle.current;
@@ -269,6 +330,39 @@ export function AutonomousWalkingVisitor({
             <meshStandardMaterial color="#be123c" roughness={0.5} />
           </mesh>
         </group>
+
+        {/* 6. Discussion Presentation Board (Held by student during Activity) */}
+        {isActivityActive && (
+          <group position={[0, 1.05, 0.32]} rotation={[-0.15, 0, 0]}>
+            {/* Timber Clipboard Backing */}
+            <mesh castShadow receiveShadow>
+              <boxGeometry args={[0.38, 0.48, 0.015]} />
+              <meshStandardMaterial color="#854d0e" roughness={0.7} />
+            </mesh>
+            {/* Whiteboard / Note Paper Surface */}
+            <mesh position={[0, 0, 0.009]} receiveShadow>
+              <planeGeometry args={[0.35, 0.44]} />
+              <meshStandardMaterial color="#ffffff" roughness={0.25} />
+            </mesh>
+            {/* Silver Top Clip */}
+            <mesh position={[0, 0.22, 0.015]} castShadow>
+              <boxGeometry args={[0.12, 0.03, 0.02]} />
+              <meshStandardMaterial color="#94a3b8" metalness={0.85} roughness={0.2} />
+            </mesh>
+            {/* Emerald Header Strip */}
+            <mesh position={[0, 0.15, 0.011]}>
+              <boxGeometry args={[0.28, 0.02, 0.005]} />
+              <meshStandardMaterial color="#059669" />
+            </mesh>
+            {/* Note Lines */}
+            {[-0.02, -0.07, -0.12, -0.17].map((ly, lIdx) => (
+              <mesh key={lIdx} position={[0, ly, 0.011]}>
+                <boxGeometry args={[0.28, 0.008, 0.004]} />
+                <meshStandardMaterial color="#cbd5e1" />
+              </mesh>
+            ))}
+          </group>
+        )}
       </group>
     </group>
   );
