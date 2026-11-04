@@ -131,12 +131,6 @@ export const ClassroomActivityBoard = memo(function ClassroomActivityBoard({
                 </h3>
               </div>
 
-              {/* Hint Box */}
-              <div className="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 mb-3 text-xs text-slate-700">
-                <span className="font-bold text-emerald-900">Key Context: </span>
-                {currentQ.hint}
-              </div>
-
               {/* Interactive Action Controls */}
               <div className="flex items-center justify-between pt-2 border-t border-slate-100">
                 <div className="flex items-center gap-1.5">

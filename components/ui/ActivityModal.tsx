@@ -7,8 +7,6 @@ import {
   ChevronRight,
   ClipboardList,
   GraduationCap,
-  HelpCircle,
-  Lightbulb,
   Send,
   Users,
   X,
@@ -152,33 +150,9 @@ export function ActivityModal({
           </div>
 
           {/* Question Text */}
-          <h2 className="text-base sm:text-lg md:text-xl font-extrabold text-slate-900 leading-snug mb-3">
+          <h2 className="text-base sm:text-lg md:text-xl font-extrabold text-slate-900 leading-snug">
             &ldquo;{currentQ.question}&rdquo;
           </h2>
-
-          {/* Contextual Hint */}
-          <div className="p-3 rounded-xl bg-white border border-emerald-200 text-xs text-slate-700 mb-4">
-            <p className="font-extrabold text-emerald-800 mb-1 flex items-center gap-1.5">
-              <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
-              Guiding Reflection Context:
-            </p>
-            <p>{currentQ.hint}</p>
-          </div>
-
-          {/* Key Discussion Takeaways */}
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-wider text-slate-600 mb-2">
-              Key Classroom Discussion Points:
-            </p>
-            <div className="space-y-2">
-              {currentQ.keyPoints.map((pt, pIdx) => (
-                <div key={pIdx} className="flex items-start gap-2 text-xs sm:text-[13px] text-slate-800">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>{pt}</span>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
 
         {/* Student Reflection Input Section */}
