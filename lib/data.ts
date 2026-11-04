@@ -249,7 +249,7 @@ export const ACTIVITY_QUESTIONS: ActivityQuestion[] = [
     options: [
       {
         id: "A",
-        text: "To limit computer usage so devices are rarely turned on during the day.",
+        text: "To limit daily screen time strictly to minimize solar battery charging cycles.",
         isCorrect: false,
       },
       {
@@ -259,12 +259,12 @@ export const ACTIVITY_QUESTIONS: ActivityQuestion[] = [
       },
       {
         id: "C",
-        text: "Only to prevent students from playing games during break times.",
+        text: "To prevent collaborative peer discussion during computer lab research hours.",
         isCorrect: false,
       },
       {
         id: "D",
-        text: "Because school rules require memorizing ICT manuals without actual computer usage.",
+        text: "To enforce manual memorization of IT rules instead of hands-on device usage.",
         isCorrect: false,
       },
     ],
@@ -284,17 +284,17 @@ export const ACTIVITY_QUESTIONS: ActivityQuestion[] = [
       },
       {
         id: "B",
-        text: "By burying depleted batteries under trees so they degrade into the soil.",
+        text: "By running high-wattage backup diesel generators to power air conditioners in the woods.",
         isCorrect: false,
       },
       {
         id: "C",
-        text: "By keeping computers running 24/7 on maximum brightness to illuminate the woods.",
+        text: "By replacing digital screens with disposable single-use plastic study sheets.",
         isCorrect: false,
       },
       {
         id: "D",
-        text: "By printing all digital lessons on paper instead of viewing them on digital screens.",
+        text: "By printing all electronic research on paper to avoid consuming stored battery wattage.",
         isCorrect: false,
       },
     ],
@@ -309,12 +309,12 @@ export const ACTIVITY_QUESTIONS: ActivityQuestion[] = [
     options: [
       {
         id: "A",
-        text: "They replace teachers completely so students only interact through automated chatbots.",
+        text: "By replacing human teachers completely with pre-programmed automated software chatbots.",
         isCorrect: false,
       },
       {
         id: "B",
-        text: "By streaming non-educational entertainment all day without curriculum guidelines.",
+        text: "By allowing unrestricted non-educational video streaming throughout scientific study hours.",
         isCorrect: false,
       },
       {
@@ -324,7 +324,7 @@ export const ACTIVITY_QUESTIONS: ActivityQuestion[] = [
       },
       {
         id: "D",
-        text: "By transforming the open forest into an enclosed indoor gaming lounge.",
+        text: "By isolating students from nature inside enclosed virtual simulation booths.",
         isCorrect: false,
       },
     ],
@@ -344,17 +344,17 @@ export const ACTIVITY_QUESTIONS: ActivityQuestion[] = [
       },
       {
         id: "B",
-        text: "It allows students to skip assignments by wandering into the deep jungle.",
+        text: "It eliminates the need for curriculum standards, exams, and formal academic evaluation.",
         isCorrect: false,
       },
       {
         id: "C",
-        text: "It eliminates the need for books, laptops, and structured learning.",
+        text: "It replaces technical digital computer literacy with solely manual outdoor forestry labor.",
         isCorrect: false,
       },
       {
         id: "D",
-        text: "It makes school days shorter because solar power only lasts 30 minutes.",
+        text: "It eliminates all digital homework assignments because off-grid networks cannot store data.",
         isCorrect: false,
       },
     ],
@@ -369,7 +369,7 @@ export const ACTIVITY_QUESTIONS: ActivityQuestion[] = [
     options: [
       {
         id: "A",
-        text: "No, because all computing technology inevitably harms ecosystems regardless of design.",
+        text: "No, because all digital electronics inevitably destroy ecosystems regardless of design.",
         isCorrect: false,
       },
       {
@@ -379,12 +379,12 @@ export const ACTIVITY_QUESTIONS: ActivityQuestion[] = [
       },
       {
         id: "C",
-        text: "No, because electronics cannot function safely outdoors in tropical climates.",
+        text: "No, because electronics cannot function safely outdoors under tropical canopy humidity.",
         isCorrect: false,
       },
       {
         id: "D",
-        text: "Yes, but only if computers are prohibited from scientific study and environmental monitoring.",
+        text: "Yes, but only if computing is banned from scientific conservation and environmental biology.",
         isCorrect: false,
       },
     ],

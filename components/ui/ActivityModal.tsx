@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   ChevronDown,
   ChevronRight,
+  ChevronUp,
   Flame,
   Gamepad2,
   GraduationCap,
@@ -39,25 +40,29 @@ export function ActivityModal({
   isActivityActive,
   onToggleActivity,
 }: ActivityModalProps) {
-  // Game State: Start minimized so the 3D gathered humans and boards are completely unobstructed
-  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
-  const [hasAnswered, setHasAnswered] = useState<boolean>(false);
+  // Game State
   const [score, setScore] = useState<number>(0);
   const [streak, setStreak] = useState<number>(0);
-  const [answeredQuestions, setAnsweredQuestions] = useState<Record<number, { optionId: string; isCorrect: boolean }>>({});
+  const [lives, setLives] = useState<number>(3); // 3 Eco-Hearts
+  const [wrongOptionIds, setWrongOptionIds] = useState<string[]>([]);
+  const [correctOptionId, setCorrectOptionId] = useState<string | null>(null);
+  const [answeredQuestions, setAnsweredQuestions] = useState<Record<number, { isCorrect: boolean }>>({});
+  const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const [isGameFinished, setIsGameFinished] = useState<boolean>(false);
-  const [isMinimized, setIsMinimized] = useState<boolean>(true);
+  const [isMinimized, setIsMinimized] = useState<boolean>(true); // Start minimized on mobile so 3D humans are visible
 
   if (!isOpen) return null;
 
   const currentQ = ACTIVITY_QUESTIONS[activeQuestionIndex] || ACTIVITY_QUESTIONS[0];
   const totalQuestions = ACTIVITY_QUESTIONS.length;
-  const currentRecord = answeredQuestions[currentQ.id];
+  const isQuestionSolved = Boolean(correctOptionId) || Boolean(answeredQuestions[currentQ.id]?.isCorrect);
 
-  // Play celebration sound or chime via Web Audio
-  const playChime = (isSuccess: boolean) => {
+  // Synthesize Web Audio SFX (Success Chime vs Buzzer)
+  const playAudio = (isSuccess: boolean) => {
     try {
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const AudioCtx =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (!AudioCtx) return;
       const ctx = new AudioCtx();
       const osc = ctx.createOscillator();
@@ -66,67 +71,84 @@ export function ActivityModal({
       gain.connect(ctx.destination);
 
       if (isSuccess) {
+        // High 3-tone victory chime
+        osc.type = "sine";
         osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
         osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // E5
         osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2); // G5
         gain.gain.setValueAtTime(0.2, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
         osc.start();
-        osc.stop(ctx.currentTime + 0.45);
+        osc.stop(ctx.currentTime + 0.5);
       } else {
-        osc.frequency.setValueAtTime(330, ctx.currentTime);
-        osc.frequency.setValueAtTime(260, ctx.currentTime + 0.15);
-        gain.gain.setValueAtTime(0.18, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+        // Low discordant buzzer tone for wrong answer
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(220, ctx.currentTime);
+        osc.frequency.setValueAtTime(160, ctx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.25, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
         osc.start();
-        osc.stop(ctx.currentTime + 0.35);
+        osc.stop(ctx.currentTime + 0.4);
       }
     } catch {
       // Audio fallback silent
     }
   };
 
-  // Handle selecting an answer
+  // Handle selecting an answer choice
   const handleSelectOption = (optionId: string) => {
-    if (hasAnswered || currentRecord) return;
+    // If question is already solved or game over, ignore
+    if (isQuestionSolved || isGameOver || wrongOptionIds.includes(optionId)) return;
 
     const chosen = currentQ.options.find((opt) => opt.id === optionId);
     const isCorrect = Boolean(chosen?.isCorrect);
 
-    setSelectedOptionId(optionId);
-    setHasAnswered(true);
-
     if (isCorrect) {
-      playChime(true);
+      // ✅ CORRECT ANSWER!
+      playAudio(true);
       confetti({
-        particleCount: 50,
-        spread: 60,
-        origin: { y: 0.65 },
+        particleCount: 60,
+        spread: 70,
+        origin: { y: 0.6 },
         colors: ["#10b981", "#34d399", "#f59e0b", "#38bdf8"],
       });
-      const pointsEarned = 100 + streak * 20;
+
+      const pointsEarned = 100 + streak * 25;
       setScore((s) => s + pointsEarned);
       setStreak((st) => st + 1);
-    } else {
-      playChime(false);
-      setStreak(0);
-    }
+      setCorrectOptionId(optionId);
 
-    setAnsweredQuestions((prev) => ({
-      ...prev,
-      [currentQ.id]: { optionId, isCorrect },
-    }));
+      setAnsweredQuestions((prev) => ({
+        ...prev,
+        [currentQ.id]: { isCorrect: true },
+      }));
+    } else {
+      // ❌ WRONG ANSWER!
+      playAudio(false);
+      setStreak(0);
+      setWrongOptionIds((prev) => [...prev, optionId]);
+
+      const nextLives = lives - 1;
+      setLives(nextLives);
+
+      if (nextLives <= 0) {
+        // Ran out of hearts!
+        setIsGameOver(true);
+      }
+    }
   };
 
-  // Move to Next Challenge
+  // Advance to Next Question
   const handleNextChallenge = () => {
+    if (!isQuestionSolved) return;
+
     if (activeQuestionIndex < totalQuestions - 1) {
       const nextIdx = activeQuestionIndex + 1;
       onSelectQuestion(nextIdx);
-      setSelectedOptionId(answeredQuestions[ACTIVITY_QUESTIONS[nextIdx].id]?.optionId || null);
-      setHasAnswered(Boolean(answeredQuestions[ACTIVITY_QUESTIONS[nextIdx].id]));
+      setWrongOptionIds([]);
+      setCorrectOptionId(null);
     } else {
-      // Final level completed!
+      // All 5 questions successfully completed!
       setIsGameFinished(true);
       confetti({
         particleCount: 160,
@@ -137,18 +159,22 @@ export function ActivityModal({
     }
   };
 
-  // Reset & Play Again
+  // Restart Entire Game
   const handleRestartGame = () => {
     setScore(0);
     setStreak(0);
-    setSelectedOptionId(null);
-    setHasAnswered(false);
+    setLives(3);
+    setWrongOptionIds([]);
+    setCorrectOptionId(null);
     setAnsweredQuestions({});
+    setIsGameOver(false);
     setIsGameFinished(false);
     onSelectQuestion(0);
   };
 
-  // Minimized Floating Pill Widget (Completely unobstructed 3D view of the gathered humans!)
+  // =========================================================================
+  // 1. MINIMIZED FLOATING PILL (Non-intrusive on mobile, lets user see 3D students)
+  // =========================================================================
   if (isMinimized) {
     return (
       <div
@@ -156,21 +182,35 @@ export function ActivityModal({
         style={{ zIndex: 40, pointerEvents: "none" }}
       >
         <div className="pointer-events-auto flex items-center gap-1.5 sm:gap-2 p-1.5 sm:p-2 rounded-2xl bg-white/98 backdrop-blur-xl border-2 border-emerald-600 shadow-2xl text-slate-900">
+          {/* Status info */}
           <div className="flex items-center gap-1 pl-1 font-extrabold text-xs text-emerald-800">
             <Gamepad2 className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>Q{currentQ.id}/5</span>
             <span className="text-slate-300">•</span>
             <span>🌿 {score}pts</span>
+            <span className="text-slate-300">•</span>
+            <div className="flex items-center">
+              {[1, 2, 3].map((heartNum) => (
+                <span
+                  key={heartNum}
+                  className={`text-xs ${heartNum <= lives ? "text-rose-500" : "text-slate-300 opacity-40"}`}
+                >
+                  ❤️
+                </span>
+              ))}
+            </div>
           </div>
 
+          {/* Open Game Button */}
           <button
             onClick={() => setIsMinimized(false)}
             className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs cursor-pointer shadow-sm transition-all active:scale-95"
           >
-            <span>Play Game</span>
+            <span>Play Quiz</span>
             <Maximize2 className="w-3 h-3" />
           </button>
 
+          {/* Close HUD */}
           <button
             onClick={onClose}
             className="p-1 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-800 cursor-pointer"
@@ -183,6 +223,9 @@ export function ActivityModal({
     );
   }
 
+  // =========================================================================
+  // 2. EXPANDED QUIZ HUD (Compact bottom sheet on mobile, never blocks top half)
+  // =========================================================================
   return (
     <div
       className="fixed bottom-14 sm:bottom-4 right-2 left-2 sm:left-auto sm:right-4 z-40 max-w-md sm:max-w-lg pointer-events-none flex flex-col justify-end"
@@ -192,7 +235,7 @@ export function ActivityModal({
       }}
     >
       <div
-        className="pointer-events-auto relative w-full bg-white/98 backdrop-blur-2xl border-2 border-emerald-600 rounded-3xl p-3.5 sm:p-5 shadow-2xl text-slate-800 max-h-[48vh] sm:max-h-[75vh] overflow-y-auto flex flex-col"
+        className="pointer-events-auto relative w-full bg-white/98 backdrop-blur-2xl border-2 border-emerald-600 rounded-3xl p-3.5 sm:p-5 shadow-2xl text-slate-800 max-h-[50vh] sm:max-h-[75vh] overflow-y-auto flex flex-col"
         style={{ WebkitOverflowScrolling: "touch" }}
       >
         {/* Top Control Buttons: Minimize & Close */}
@@ -215,207 +258,230 @@ export function ActivityModal({
           </button>
         </div>
 
-        {/* =========================================================================
-            GAME HUD HEADER: SCORE, STREAK, LEVEL PROGRESS
-        ========================================================================= */}
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3 mb-4 pr-8 shrink-0">
+        {/* =====================================================================
+            GAME HUD HEADER: SCORE, STREAK, LIVES / HEARTS
+        ===================================================================== */}
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-2.5 mb-3 pr-20 shrink-0">
           <div className="flex items-center gap-2">
-            <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-emerald-600 text-white font-extrabold text-sm shadow-sm">
-              <Gamepad2 className="w-5 h-5" />
+            <span className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-600 text-white font-extrabold text-sm shadow-xs">
+              <Gamepad2 className="w-4 h-4 sm:w-5 sm:h-5" />
             </span>
             <div>
-              <span className="text-[10px] font-mono font-extrabold uppercase tracking-widest text-emerald-700 block">
-                Interactive Classroom Game
+              <span className="text-[9px] font-mono font-extrabold uppercase tracking-widest text-emerald-700 block leading-tight">
+                Classroom Quiz Game
               </span>
-              <h1 className="text-base sm:text-lg font-extrabold text-slate-900 leading-none">
-                Eco-ICT Forest Challenge
+              <h1 className="text-sm sm:text-base font-extrabold text-slate-900 leading-tight">
+                Eco-ICT Challenge
               </h1>
             </div>
           </div>
 
-          {/* Game Stats Pill */}
-          <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-2xl">
+          {/* Game Stats Pill with Lives / Hearts */}
+          <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-xl">
+            {/* Lives / Hearts */}
+            <div className="flex items-center gap-0.5" title={`${lives} Hearts Remaining`}>
+              {[1, 2, 3].map((heartIndex) => (
+                <span
+                  key={heartIndex}
+                  className={`text-xs transition-transform ${
+                    heartIndex <= lives ? "text-rose-500 scale-100" : "text-slate-300 opacity-30 scale-90"
+                  }`}
+                >
+                  ❤️
+                </span>
+              ))}
+            </div>
+
+            <span className="w-px h-3 bg-emerald-300" />
+
             {/* Score */}
-            <div className="flex items-center gap-1 text-emerald-900 font-extrabold text-xs">
-              <span>🌿</span>
+            <div className="text-emerald-900 font-extrabold text-xs">
               <span>{score} pts</span>
             </div>
 
-            <span className="w-px h-3.5 bg-emerald-300" />
-
             {/* Streak */}
-            <div className="flex items-center gap-1 text-amber-700 font-extrabold text-xs">
-              <Flame className={`w-3.5 h-3.5 ${streak > 1 ? "text-orange-500 animate-bounce" : "text-amber-500"}`} />
-              <span>x{streak} Streak</span>
-            </div>
-
-            <span className="w-px h-3.5 bg-emerald-300 hidden xs:block" />
-
-            {/* 3D Class Gathering Switcher */}
-            <button
-              onClick={onToggleActivity}
-              className={`hidden xs:flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-bold cursor-pointer transition-colors ${
-                isActivityActive
-                  ? "bg-emerald-600 text-white shadow-xs"
-                  : "bg-white text-slate-700 border border-emerald-200 hover:bg-emerald-100"
-              }`}
-            >
-              <Users className="w-3 h-3" />
-              <span>{isActivityActive ? "Class In 3D" : "Gather Class"}</span>
-            </button>
+            {streak > 1 && (
+              <>
+                <span className="w-px h-3 bg-emerald-300" />
+                <div className="flex items-center gap-0.5 text-amber-700 font-extrabold text-xs">
+                  <Flame className="w-3 h-3 text-orange-500 animate-bounce" />
+                  <span>x{streak}</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
-        {/* =========================================================================
-            VICTORY COMPLETION SCREEN
-        ========================================================================= */}
-        {isGameFinished ? (
-          <div className="flex flex-col items-center justify-center text-center py-6 px-2 my-auto">
-            <div className="relative flex items-center justify-center mb-4">
-              <div className="w-24 h-24 rounded-full bg-emerald-100 border-4 border-emerald-400 flex items-center justify-center shadow-lg animate-bounce">
-                <Trophy className="w-12 h-12 text-amber-500" />
-              </div>
-              <Sparkles className="w-6 h-6 text-amber-400 absolute -top-1 -right-1 animate-pulse" />
+        {/* =====================================================================
+            SCREEN 1: GAME OVER (Lost all 3 hearts)
+        ===================================================================== */}
+        {isGameOver ? (
+          <div className="flex flex-col items-center justify-center text-center py-4 px-2 my-auto">
+            <div className="w-16 h-16 rounded-full bg-rose-100 border-4 border-rose-300 flex items-center justify-center mb-3 shadow-md animate-bounce">
+              <span className="text-3xl">💔</span>
             </div>
 
-            <span className="text-xs font-mono font-extrabold uppercase tracking-widest text-emerald-700 mb-1">
-              Mission Accomplished!
+            <span className="text-[11px] font-mono font-extrabold uppercase tracking-widest text-rose-600 mb-1">
+              Out of Eco-Hearts!
             </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">
-              Eco-ICT Guardian Certified! 🏆
+            <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 mb-1.5">
+              Forest Challenge Incomplete
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto mb-6">
-              You answered all 5 classroom discussion questions and demonstrated outstanding environmental stewardship and ICT policy awareness!
+            <p className="text-xs text-slate-600 max-w-sm mx-auto mb-4 leading-relaxed">
+              Real environmental stewards learn through persistence! Review the classroom presentation boards and try again.
             </p>
 
-            {/* Final Game Scorecard */}
-            <div className="grid grid-cols-3 gap-3 w-full max-w-md bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-6 shadow-sm">
+            <button
+              onClick={handleRestartGame}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs sm:text-sm shadow-md transition-all cursor-pointer active:scale-95"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Try Again with 3 Hearts</span>
+            </button>
+          </div>
+        ) : isGameFinished ? (
+          /* =====================================================================
+              SCREEN 2: VICTORY COMPLETION (Mastered all 5 questions)
+          ===================================================================== */
+          <div className="flex flex-col items-center justify-center text-center py-4 px-2 my-auto">
+            <div className="relative flex items-center justify-center mb-3">
+              <div className="w-16 h-16 rounded-full bg-emerald-100 border-4 border-emerald-400 flex items-center justify-center shadow-lg animate-bounce">
+                <Trophy className="w-8 h-8 text-amber-500" />
+              </div>
+              <Sparkles className="w-5 h-5 text-amber-400 absolute -top-1 -right-1 animate-pulse" />
+            </div>
+
+            <span className="text-[10px] font-mono font-extrabold uppercase tracking-widest text-emerald-700 mb-0.5">
+              Mission Accomplished!
+            </span>
+            <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 mb-1">
+              Eco-ICT Guardian Certified! 🏆
+            </h2>
+            <p className="text-xs text-slate-600 max-w-sm mx-auto mb-4 leading-relaxed">
+              You answered all 5 classroom discussion questions and proved outstanding environmental stewardship!
+            </p>
+
+            {/* Scorecard */}
+            <div className="grid grid-cols-3 gap-2 w-full max-w-sm bg-emerald-50 border border-emerald-200 rounded-2xl p-3 mb-4 shadow-xs">
               <div className="text-center">
-                <p className="text-[10px] uppercase font-bold text-emerald-800">Final Score</p>
-                <p className="text-xl sm:text-2xl font-extrabold text-emerald-900">{score}</p>
+                <p className="text-[9px] uppercase font-bold text-emerald-800">Final Score</p>
+                <p className="text-base sm:text-lg font-extrabold text-emerald-900">{score}</p>
               </div>
               <div className="text-center border-x border-emerald-200">
-                <p className="text-[10px] uppercase font-bold text-emerald-800">Correct</p>
-                <p className="text-xl sm:text-2xl font-extrabold text-emerald-900">
-                  {Object.values(answeredQuestions).filter((q) => q.isCorrect).length} / 5
-                </p>
+                <p className="text-[9px] uppercase font-bold text-emerald-800">Hearts Left</p>
+                <p className="text-base sm:text-lg font-extrabold text-emerald-900">{lives} / 3</p>
               </div>
               <div className="text-center">
-                <p className="text-[10px] uppercase font-bold text-emerald-800">Rank</p>
-                <p className="text-xs sm:text-sm font-extrabold text-amber-700 mt-1">Caraga Scholar</p>
+                <p className="text-[9px] uppercase font-bold text-emerald-800">Rank</p>
+                <p className="text-xs font-extrabold text-amber-700 mt-1">Caraga Master</p>
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex items-center gap-3">
+            {/* Actions */}
+            <div className="flex items-center gap-2">
               <button
                 onClick={handleRestartGame}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs sm:text-sm transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs transition-all cursor-pointer"
               >
-                <RotateCcw className="w-4 h-4" />
+                <RotateCcw className="w-3.5 h-3.5" />
                 <span>Play Again</span>
               </button>
               <button
                 onClick={onClose}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs sm:text-sm shadow-lg transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs shadow-md transition-all cursor-pointer"
               >
-                <span>Return to 3D Classroom</span>
-                <ChevronRight className="w-4 h-4" />
+                <span>Return to 3D Scene</span>
+                <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
         ) : (
-          /* =========================================================================
-              ACTIVE GAME QUESTION SCREEN
-          ========================================================================= */
+          /* =====================================================================
+              SCREEN 3: ACTIVE CHALLENGE QUESTION
+          ===================================================================== */
           <div className="flex flex-col flex-1">
-            {/* Level / Progress Indicators (1 - 5) */}
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-1.5 sm:gap-2">
+            {/* Level Progress (1 - 5) */}
+            <div className="flex items-center justify-between mb-2.5">
+              <div className="flex items-center gap-1 sm:gap-1.5">
                 {ACTIVITY_QUESTIONS.map((q, idx) => {
                   const isCurrent = activeQuestionIndex === idx;
                   const isDone = Boolean(answeredQuestions[q.id]);
-                  const wasRight = answeredQuestions[q.id]?.isCorrect;
 
                   return (
-                    <button
+                    <div
                       key={q.id}
-                      onClick={() => {
-                        onSelectQuestion(idx);
-                        setSelectedOptionId(answeredQuestions[q.id]?.optionId || null);
-                        setHasAnswered(Boolean(answeredQuestions[q.id]));
-                      }}
-                      className={`flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-xl font-extrabold text-xs transition-all cursor-pointer border ${
+                      className={`flex items-center justify-center w-6 h-6 rounded-lg text-xs font-mono font-extrabold transition-all ${
                         isCurrent
-                          ? "bg-emerald-700 text-white border-emerald-800 shadow-md scale-110"
+                          ? "bg-emerald-600 text-white shadow-xs scale-105"
                           : isDone
-                          ? wasRight
-                            ? "bg-emerald-100 text-emerald-800 border-emerald-300"
-                            : "bg-rose-100 text-rose-800 border-rose-300"
-                          : "bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200"
+                          ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                          : "bg-slate-100 text-slate-400 border border-slate-200"
                       }`}
                     >
                       {idx + 1}
-                    </button>
+                    </div>
                   );
                 })}
               </div>
 
-              <span className="text-xs font-mono font-bold text-slate-500">
+              <span className="text-[11px] font-mono font-bold text-slate-500">
                 Question {currentQ.id} of {totalQuestions}
               </span>
             </div>
 
-            {/* Prompt Header Card */}
-            <div className="rounded-2xl bg-emerald-50/80 border border-emerald-200 p-4 sm:p-5 mb-4 shadow-xs">
-              <div className="flex items-center justify-between border-b border-emerald-200/80 pb-2 mb-2.5">
-                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
+            {/* Question Card */}
+            <div className="rounded-2xl bg-emerald-50/80 border border-emerald-200 p-3 sm:p-3.5 mb-3 shadow-xs">
+              <div className="flex items-center justify-between border-b border-emerald-200/80 pb-1.5 mb-2">
+                <span className="text-[10px] font-mono font-extrabold uppercase tracking-wider text-emerald-800 flex items-center gap-1">
                   <GraduationCap className="w-3.5 h-3.5 text-emerald-700" />
                   {currentQ.category}
                 </span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white border border-emerald-300 text-emerald-800">
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-white border border-emerald-300 text-emerald-800">
                   {currentQ.badge}
                 </span>
               </div>
 
-              <h2 className="text-base sm:text-lg md:text-xl font-extrabold text-slate-900 leading-snug">
+              <h2 className="text-xs sm:text-sm md:text-base font-extrabold text-slate-900 leading-snug">
                 &ldquo;{currentQ.question}&rdquo;
               </h2>
             </div>
 
-            {/* Interactive Multiple Choice Options (A, B, C, D) */}
-            <div className="grid grid-cols-1 gap-2.5 mb-4">
+            {/* Multiple Choice Options */}
+            <div className="grid grid-cols-1 gap-2 mb-3">
               {currentQ.options.map((option) => {
-                const isSelected = selectedOptionId === option.id;
-                const isAnsweredState = hasAnswered || Boolean(currentRecord);
-                const isCorrectOption = option.isCorrect;
+                const isSelectedCorrect = correctOptionId === option.id;
+                const isSelectedWrong = wrongOptionIds.includes(option.id);
 
                 let btnStyle = "bg-white hover:bg-emerald-50/60 border-slate-200 text-slate-800";
 
-                if (isAnsweredState) {
-                  if (isCorrectOption) {
-                    btnStyle = "bg-emerald-500 text-white border-emerald-600 shadow-md";
-                  } else if (isSelected && !isCorrectOption) {
-                    btnStyle = "bg-rose-500 text-white border-rose-600 shadow-md";
-                  } else {
-                    btnStyle = "bg-slate-50 opacity-60 border-slate-200 text-slate-500";
-                  }
+                if (isSelectedCorrect) {
+                  // Bright vibrant green for the correct answer
+                  btnStyle = "bg-emerald-500 text-white border-emerald-600 shadow-md font-bold";
+                } else if (isSelectedWrong) {
+                  // Vibrant red for wrong answer
+                  btnStyle = "bg-rose-500 text-white border-rose-600 shadow-xs opacity-90 cursor-not-allowed";
+                } else if (isQuestionSolved) {
+                  // Dim unchosen options after solving
+                  btnStyle = "bg-slate-50 opacity-40 border-slate-200 text-slate-400 cursor-not-allowed";
                 }
 
                 return (
                   <button
                     key={option.id}
                     onClick={() => handleSelectOption(option.id)}
-                    disabled={isAnsweredState}
-                    className={`flex items-start gap-3 p-3 sm:p-3.5 rounded-2xl border-2 text-left transition-all duration-200 cursor-pointer select-none ${btnStyle} ${
-                      !isAnsweredState ? "hover:scale-[1.01] hover:border-emerald-400 active:scale-[0.99]" : ""
+                    disabled={isQuestionSolved || isSelectedWrong}
+                    className={`flex items-start gap-2.5 p-2.5 sm:p-3 rounded-2xl border-2 text-left transition-all duration-200 cursor-pointer select-none ${btnStyle} ${
+                      !isQuestionSolved && !isSelectedWrong
+                        ? "hover:scale-[1.01] hover:border-emerald-400 active:scale-[0.99]"
+                        : ""
                     }`}
                   >
+                    {/* Badge Letter A, B, C, D */}
                     <span
-                      className={`flex items-center justify-center w-6 h-6 rounded-lg font-mono font-extrabold text-xs shrink-0 mt-0.5 ${
-                        isAnsweredState && isCorrectOption
+                      className={`flex items-center justify-center w-5 h-5 rounded-md font-mono font-extrabold text-[11px] shrink-0 mt-0.5 ${
+                        isSelectedCorrect
                           ? "bg-white text-emerald-700"
-                          : isAnsweredState && isSelected
+                          : isSelectedWrong
                           ? "bg-white text-rose-700"
                           : "bg-emerald-100 text-emerald-900"
                       }`}
@@ -423,66 +489,67 @@ export function ActivityModal({
                       {option.id}
                     </span>
 
-                    <span className="text-xs sm:text-[13px] font-semibold leading-relaxed flex-1">
+                    {/* Option Text */}
+                    <span className="text-[11px] sm:text-xs leading-relaxed flex-1">
                       {option.text}
                     </span>
 
-                    {isAnsweredState && isCorrectOption && (
-                      <CheckCircle2 className="w-5 h-5 text-white shrink-0 mt-0.5" />
+                    {/* Icons */}
+                    {isSelectedCorrect && (
+                      <CheckCircle2 className="w-4 h-4 text-white shrink-0 mt-0.5" />
                     )}
-                    {isAnsweredState && isSelected && !isCorrectOption && (
-                      <XCircle className="w-5 h-5 text-white shrink-0 mt-0.5" />
+                    {isSelectedWrong && (
+                      <XCircle className="w-4 h-4 text-white shrink-0 mt-0.5" />
                     )}
                   </button>
                 );
               })}
             </div>
 
-            {/* Feedback & Explanation Card */}
-            {(hasAnswered || Boolean(currentRecord)) && (
-              <div
-                className={`p-3.5 rounded-2xl border text-xs leading-relaxed mb-4 transition-all duration-300 ${
-                  (currentRecord?.isCorrect ?? currentQ.options.find((o) => o.id === selectedOptionId)?.isCorrect)
-                    ? "bg-emerald-50 border-emerald-300 text-emerald-950"
-                    : "bg-amber-50 border-amber-300 text-amber-950"
-                }`}
-              >
-                <div className="flex items-center gap-1.5 font-extrabold mb-1">
-                  {(currentRecord?.isCorrect ?? currentQ.options.find((o) => o.id === selectedOptionId)?.isCorrect) ? (
-                    <>
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                      <span>Brilliant! +100 Eco-Points Earned! 🎉</span>
-                    </>
-                  ) : (
-                    <>
-                      <XCircle className="w-4 h-4 text-amber-600" />
-                      <span>Educational Takeaway:</span>
-                    </>
-                  )}
+            {/* Dynamic Feedback Card: Shows clear RED for wrong choices and GREEN for correct! */}
+            {wrongOptionIds.length > 0 && !isQuestionSolved && (
+              <div className="p-2.5 rounded-xl border border-rose-300 bg-rose-50 text-rose-950 text-xs leading-relaxed mb-3 animate-pulse">
+                <div className="flex items-center gap-1.5 font-extrabold text-rose-800 mb-0.5">
+                  <XCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span>Incorrect Choice! You lost 1 Heart (❤️).</span>
                 </div>
-                <p>{currentQ.explanation}</p>
+                <p className="text-[11px] text-rose-700">
+                  That choice harms or restricts the eco-classroom. Read carefully and try another option!
+                </p>
               </div>
             )}
 
-            {/* Bottom Next Question Button */}
-            <div className="flex items-center justify-between border-t border-slate-200 pt-3 mt-auto">
-              <span className="text-[11px] text-slate-500 font-medium">
-                {hasAnswered || currentRecord
-                  ? "Great reflection! Tap next to advance."
-                  : "Tap your answer to score points!"}
+            {isQuestionSolved && (
+              <div className="p-2.5 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-950 text-xs leading-relaxed mb-3">
+                <div className="flex items-center gap-1.5 font-extrabold text-emerald-800 mb-0.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Correct! +100 Eco-Points! 🎉</span>
+                </div>
+                <p className="text-[11px] text-slate-700">{currentQ.explanation}</p>
+              </div>
+            )}
+
+            {/* Next Challenge Action Footer */}
+            <div className="flex items-center justify-between border-t border-slate-200 pt-2.5 mt-auto">
+              <span className="text-[10px] sm:text-[11px] text-slate-500 font-medium truncate">
+                {isQuestionSolved
+                  ? "Correct! Tap next challenge."
+                  : wrongOptionIds.length > 0
+                  ? "Try another choice to solve it!"
+                  : "Tap the correct choice to score points!"}
               </span>
 
               <button
                 onClick={handleNextChallenge}
-                disabled={!hasAnswered && !currentRecord}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-extrabold text-xs sm:text-sm transition-all cursor-pointer shadow-md ${
-                  hasAnswered || currentRecord
-                    ? "bg-emerald-700 hover:bg-emerald-800 text-white hover:scale-105 active:scale-95"
+                disabled={!isQuestionSolved}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl font-extrabold text-xs transition-all shadow-sm ${
+                  isQuestionSolved
+                    ? "bg-emerald-700 hover:bg-emerald-800 text-white cursor-pointer hover:scale-105 active:scale-95"
                     : "bg-slate-200 text-slate-400 cursor-not-allowed opacity-50"
                 }`}
               >
                 <span>{activeQuestionIndex < totalQuestions - 1 ? "Next Challenge" : "Finish Quiz 🏆"}</span>
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
