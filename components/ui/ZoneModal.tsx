@@ -7,7 +7,6 @@ import {
   Compass,
   HeartPulse,
   Monitor,
-  Sparkles,
   Sprout,
   Sun,
   Users,
@@ -86,8 +85,7 @@ export function ZoneModal({
 
         {/* Purpose Callout */}
         <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 mb-4 text-xs">
-          <p className="font-bold text-emerald-900 mb-1 flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+          <p className="font-bold text-emerald-900 mb-1">
             Core Educational Purpose:
           </p>
           <p className="text-slate-700">{zone.details.purpose}</p>

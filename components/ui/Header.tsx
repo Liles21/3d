@@ -4,12 +4,9 @@ import {
   FileText,
   Moon,
   PartyPopper,
-  Sparkles,
   Sun,
   Sunset,
   Users,
-  Volume2,
-  VolumeX,
 } from "lucide-react";
 import React from "react";
 import { PROJECT_TITLE } from "@/lib/data";
@@ -18,11 +15,11 @@ import { TimeOfDay, ZoneId } from "@/lib/types";
 interface HeaderProps {
   activeZone: ZoneId;
   timeOfDay: TimeOfDay;
-  isAudioPlaying: boolean;
+  isAudioPlaying?: boolean;
   isCelebrating?: boolean;
   onSelectZone: (zoneId: ZoneId) => void;
   onChangeTimeOfDay: (tod: TimeOfDay) => void;
-  onToggleAudio: () => void;
+  onToggleAudio?: () => void;
   onToggleCelebrate: () => void;
   onOpenConcept: () => void;
 }
@@ -151,30 +148,6 @@ export function Header({
           </button>
         </div>
 
-        {/* Forest Ambient Sound Toggle */}
-        <button
-          onClick={onToggleAudio}
-          title={isAudioPlaying ? "Mute Forest Ambience" : "Play Forest Birds & Breeze"}
-          className={`flex items-center gap-1.5 px-2.5 md:px-3 rounded-2xl backdrop-blur-md border shadow-xl transition-all cursor-pointer text-xs font-semibold whitespace-nowrap ${
-            isAudioPlaying
-              ? "bg-emerald-600 text-white border-emerald-500 shadow-emerald-500/20"
-              : "bg-white/95 text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-emerald-700"
-          }`}
-          style={{ height: "42px" }}
-        >
-          {isAudioPlaying ? (
-            <>
-              <Volume2 className="w-3.5 h-3.5 text-white animate-pulse" />
-              <span className="hidden md:inline text-[11px] font-bold">Sound ON</span>
-            </>
-          ) : (
-            <>
-              <VolumeX className="w-3.5 h-3.5 text-slate-400" />
-              <span className="hidden md:inline text-[11px]">Sound OFF</span>
-            </>
-          )}
-        </button>
-
         {/* Project Concept Blueprint Button */}
         <button
           onClick={onOpenConcept}
@@ -184,7 +157,6 @@ export function Header({
         >
           <FileText className="w-3.5 h-3.5" />
           <span className="hidden sm:inline text-[11px]">Blueprint</span>
-          <Sparkles className="w-3 h-3 text-amber-300" />
         </button>
       </div>
     </header>
